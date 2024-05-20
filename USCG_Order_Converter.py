@@ -28,13 +28,15 @@ def read_csv_to_dict(input_file):
     return data
 
 
-def manipulate_data(input_data):
+def manipulate_USCG_data(input_data):
     manipulated_data = []
     global error_added
 
     for row in input_data:
         # Check if the row is the header row and add it to the manipulated data
         if row['12'] == 'Item SKU':
+            manipulated_data.append(row)
+        if row['12'] == 'Kit ID':
             manipulated_data.append(row)
 
         elif row['12'] == 'SO-001':
@@ -1065,6 +1067,207 @@ def manipulate_data(input_data):
 
     return manipulated_data
 
+def manipulate_Terminix_data(input_data):
+    manipulated_data = []
+    global error_added
+
+    for row in input_data:
+        # Check if the row is the header row and add it to the manipulated data
+        if row['12'] == 'Item SKU':
+            manipulated_data.append(row)
+
+        elif row['12'] == 'Standard':
+            # Create six new rows with the specified values
+            new_row_1 = row.copy()
+            new_row_1['12'] = 'Headset'
+            new_row_1['16'] = 'FedEx Ground w/return lbl'
+            new_row_1['21'] = '1'
+            new_row_1['22'] = 'FDEG'
+            new_row_1['24'] = 'Kevin Mitchell'
+            new_row_1['26'] = '177264750'
+            manipulated_data.append(new_row_1)
+
+            new_row_2 = row.copy()
+            new_row_2['12'] = 'Monitor'
+            new_row_2['16'] = 'FedEx Ground w/return lbl'
+            new_row_2['21'] = '1'
+            new_row_2['22'] = 'FDEG'
+            new_row_2['24'] = 'Kevin Mitchell'
+            new_row_2['26'] = '177264750'
+            manipulated_data.append(new_row_2)
+
+            new_row_3 = row.copy()
+            new_row_3['12'] = 'Desktop'
+            new_row_3['16'] = 'FedEx Ground w/return lbl'
+            new_row_3['21'] = '1'
+            new_row_3['22'] = 'FDEG'
+            new_row_3['24'] = 'Kevin Mitchell'
+            new_row_3['26'] = '177264750'
+            manipulated_data.append(new_row_3)
+
+            new_row_4 = row.copy()
+            new_row_4['12'] = 'Webcam'
+            new_row_4['16'] = 'FedEx Ground w/return lbl'
+            new_row_4['21'] = '1'
+            new_row_4['22'] = 'FDEG'
+            new_row_4['24'] = 'Kevin Mitchell'
+            new_row_4['26'] = '177264750'
+            manipulated_data.append(new_row_4)
+
+            new_row_5 = row.copy()
+            new_row_5['12'] = 'NetCbl'
+            new_row_5['16'] = 'FedEx Ground w/return lbl'
+            new_row_5['21'] = '1'
+            new_row_5['22'] = 'FDEG'
+            new_row_5['24'] = 'Kevin Mitchell'
+            new_row_5['26'] = '177264750'
+            manipulated_data.append(new_row_5)
+
+            new_row_6 = row.copy()
+            new_row_6['12'] = 'Box'
+            new_row_6['16'] = 'FedEx Ground w/return lbl'
+            new_row_6['21'] = '1'
+            new_row_6['22'] = 'FDEG'
+            new_row_6['24'] = 'Kevin Mitchell'
+            new_row_6['26'] = '177264750'
+            manipulated_data.append(new_row_6)
+
+        elif row['12'] == '2day':
+            # Create six new rows with the specified values
+            new_row_1 = row.copy()
+            new_row_1['12'] = 'Headset'
+            new_row_1['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_1['21'] = '1'
+            new_row_1['22'] = 'FDE'
+            new_row_1['24'] = 'Kevin Mitchell'
+            new_row_1['26'] = '177264750'
+            manipulated_data.append(new_row_1)
+
+            new_row_2 = row.copy()
+            new_row_2['12'] = 'Monitor'
+            new_row_2['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_2['21'] = '1'
+            new_row_2['22'] = 'FDE'
+            new_row_2['24'] = 'Kevin Mitchell'
+            new_row_2['26'] = '177264750'
+            manipulated_data.append(new_row_2)
+
+            new_row_3 = row.copy()
+            new_row_3['12'] = 'Desktop'
+            new_row_3['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_3['21'] = '1'
+            new_row_3['22'] = 'FDE'
+            new_row_3['24'] = 'Kevin Mitchell'
+            new_row_3['26'] = '177264750'
+            manipulated_data.append(new_row_3)
+
+            new_row_4 = row.copy()
+            new_row_4['12'] = 'Webcam'
+            new_row_4['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_4['21'] = '1'
+            new_row_4['22'] = 'FDE'
+            new_row_4['24'] = 'Kevin Mitchell'
+            new_row_4['26'] = '177264750'
+            manipulated_data.append(new_row_4)
+
+            new_row_5 = row.copy()
+            new_row_5['12'] = 'NetCbl'
+            new_row_5['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_5['21'] = '1'
+            new_row_5['22'] = 'FDE'
+            new_row_5['24'] = 'Kevin Mitchell'
+            new_row_5['26'] = '177264750'
+            manipulated_data.append(new_row_5)
+
+            new_row_6 = row.copy()
+            new_row_6['12'] = 'Box'
+            new_row_6['16'] = 'FedEx 2 Day w/return lbl'
+            new_row_6['21'] = '1'
+            new_row_6['22'] = 'FDE'
+            new_row_6['24'] = 'Kevin Mitchell'
+            new_row_6['26'] = '177264750'
+            manipulated_data.append(new_row_6)
+
+        elif row['12'] == 'overnight':
+            # Create six new rows with the specified values
+            new_row_1 = row.copy()
+            new_row_1['12'] = 'Headset'
+            new_row_1['16'] = 'Overnight Priority w/return lbl'
+            new_row_1['21'] = '1'
+            new_row_1['22'] = 'FDE'
+            new_row_1['24'] = 'Kevin Mitchell'
+            new_row_1['26'] = '177264750'
+            manipulated_data.append(new_row_1)
+
+            new_row_2 = row.copy()
+            new_row_2['12'] = 'Monitor'
+            new_row_2['16'] = 'Overnight Priority w/return lbl'
+            new_row_2['21'] = '1'
+            new_row_2['22'] = 'FDE'
+            new_row_2['24'] = 'Kevin Mitchell'
+            new_row_2['26'] = '177264750'
+            manipulated_data.append(new_row_2)
+
+            new_row_3 = row.copy()
+            new_row_3['12'] = 'Desktop'
+            new_row_3['16'] = 'Overnight Priority w/return lbl'
+            new_row_3['21'] = '1'
+            new_row_3['22'] = 'FDE'
+            new_row_3['24'] = 'Kevin Mitchell'
+            new_row_3['26'] = '177264750'
+            manipulated_data.append(new_row_3)
+
+            new_row_4 = row.copy()
+            new_row_4['12'] = 'Webcam'
+            new_row_4['16'] = 'Overnight Priority w/return lbl'
+            new_row_4['21'] = '1'
+            new_row_4['22'] = 'FDE'
+            new_row_4['24'] = 'Kevin Mitchell'
+            new_row_4['26'] = '177264750'
+            manipulated_data.append(new_row_4)
+
+            new_row_5 = row.copy()
+            new_row_5['12'] = 'NetCbl'
+            new_row_5['16'] = 'Overnight Priority w/return lbl'
+            new_row_5['21'] = '1'
+            new_row_5['22'] = 'FDE'
+            new_row_5['24'] = 'Kevin Mitchell'
+            new_row_5['26'] = '177264750'
+            manipulated_data.append(new_row_5)
+
+            new_row_6 = row.copy()
+            new_row_6['12'] = 'Box'
+            new_row_6['16'] = 'Overnight Priority w/return lbl'
+            new_row_6['21'] = '1'
+            new_row_6['22'] = 'FDE'
+            new_row_6['24'] = 'Kevin Mitchell'
+            new_row_6['26'] = '177264750'
+            manipulated_data.append(new_row_6)
+
+
+
+        else:
+
+            # If row 12 does not match the specified values, add an "Error" row
+
+            if row['12'] not in ['Standard','2day','overnight','Item SKU',
+
+                                 ]:
+
+                error_row = row.copy()
+
+                error_row['19'] = 'Error'
+
+                manipulated_data.append(error_row)
+                # Add this line to make error_added a global variable
+                error_added = True
+
+            else:
+
+                manipulated_data.append(row)
+
+    return manipulated_data
+
 
 def write_csv_from_dict(output_file, output_data, fieldnames):
     with open(output_file, 'w', newline='') as csv_file:
@@ -1073,12 +1276,25 @@ def write_csv_from_dict(output_file, output_data, fieldnames):
         csv_writer.writerows(output_data)
 
 
-def convert_csv(input_path, output_path):
+def convert_USCG_csv(input_path, output_path):
     # Read data from the input CSV file into a dictionary
     input_data = read_csv_to_dict(input_path)
 
     # Manipulate the data
-    manipulated_data = manipulate_data(input_data)
+    manipulated_data = manipulate_USCG_data(input_data)
+
+    # Get the field names from the input data
+    fieldnames = input_data[0].keys() if input_data else []
+
+    # Write the manipulated data to a new CSV file
+    write_csv_from_dict(output_path, manipulated_data, fieldnames)
+
+def convert_Terminix_csv(input_path, output_path):
+    # Read data from the input CSV file into a dictionary
+    input_data = read_csv_to_dict(input_path)
+
+    # Manipulate the data
+    manipulated_data = manipulate_Terminix_data(input_data)
 
     # Get the field names from the input data
     fieldnames = input_data[0].keys() if input_data else []
@@ -1087,7 +1303,7 @@ def convert_csv(input_path, output_path):
     write_csv_from_dict(output_path, manipulated_data, fieldnames)
 
 # create a function that creates a tkinter button that calls the convert_csv function
-def on_convert_button_click():
+def USCG_convert_button_click():
     global error_added  # Declare error_added as a global variable
     # Get the input and output file paths
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
@@ -1095,23 +1311,44 @@ def on_convert_button_click():
                                                filetypes=[("CSV Files", "*.csv")])
 
     # Convert the CSV file
-    convert_csv(input_path, output_path)
+    convert_USCG_csv(input_path, output_path)
 
     # Show a success message
     messagebox.showinfo(title="Semper Paratus", message="Just anther step in the long climb to Liberty!")
 
     # if error_added is True, show an error message
     if error_added:
-        messagebox.showinfo(title="Error", message="Errors have been detected. Please review the CSV file.")
+        messagebox.showinfo(title="Error", message="Womp Womp...Errors have been detected. \nPlease review the CSV file.")
 
     # Reset error_added to False
     error_added = False
 
-# create a function that creates a tkinter button that calls the convert_Terminix function
+# create a function that creates a tkinter button that calls the convert_csv function for Terminix
+def Terminix_convert_button_click():
+    global error_added  # Declare error_added as a global variable
+    # Get the input and output file paths
+    input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
+    output_path = filedialog.asksaveasfilename(title="Select Output File", defaultextension=".csv",
+                                               filetypes=[("CSV Files", "*.csv")])
+
+    # Convert the CSV file
+    convert_Terminix_csv(input_path, output_path)
+
+    # Show a success message
+    messagebox.showinfo(title="Successful conversion", message="Just anther step in the long climb to Liberty!")
+
+    # if error_added is True, show an error message
+    if error_added:
+        messagebox.showinfo(title="Error", message="Womp Womp...Errors have been detected. \nPlease review the CSV file..")
+
+    # Reset error_added to False
+    error_added = False
+
+
 
 
 root = customtkinter.CTk()
-root.title("USCG Order Converter")
+root.title("Dusty's Order Converter")
 root.geometry("500x500")
 root.iconbitmap('images/Lambda.ico')
 
@@ -1119,18 +1356,42 @@ root.iconbitmap('images/Lambda.ico')
 Header_Label1 = customtkinter.CTkLabel(root, text="Convert your CSV file for Mantis upload")
 Header_Label1.pack(pady=5)
 
+#create a tab view with custom tkinter
+My_tab = customtkinter.CTkTabview(root)
+My_tab.pack(expand=1, fill="both")
+
+#create a tab
+tab_1 = My_tab.add("USCG")
+tab_2 = My_tab.add("Terminix")
+
+
 # background image for tab_1
-my_image = customtkinter.CTkImage(light_image=Image.open('images/background.png'), dark_image=Image.open('images/background.png'),
+USCG_image = customtkinter.CTkImage(light_image=Image.open('images/background.png'), dark_image=Image.open('images/background.png'),
                                   size=(300, 300))
 
-my_label = customtkinter.CTkLabel(root, text="", image=my_image)
-my_label.pack(side='top', pady=20)
+USCG_label = customtkinter.CTkLabel(tab_1, text="", image=USCG_image)
+USCG_label.pack(side='top', pady=20)
+
+# Background image for tab_2
+terminix_image = customtkinter.CTkImage(light_image=Image.open('images/terminix.jpg'), dark_image=Image.open('images/terminix.jpg'),
+                                  size=(450, 200))
+
+terminix_label = customtkinter.CTkLabel(tab_2, text="", image=terminix_image)
+terminix_label.pack(side='top', pady=20)
+
+
 
 # Create a button that calls the convert_csv function for USCG
-convert_button = customtkinter.CTkButton(root,
-                                         text="Convert CSV", command=on_convert_button_click,
+convert_button = customtkinter.CTkButton(tab_1,
+                                         text="Convert CSV", command=USCG_convert_button_click,
                                          border_width=2, border_color="gold")
 convert_button.pack(side='bottom', pady=20)
+
+# Create a button that calls the convert_csv function for USCG
+Convert_button_terminix = customtkinter.CTkButton(tab_2,
+                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                 border_width=2, border_color="Red", fg_color="green")
+Convert_button_terminix.pack(side='bottom', pady=20)
 
 def main():
     # Create a custom Tkinter window
