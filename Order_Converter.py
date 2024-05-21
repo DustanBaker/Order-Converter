@@ -40,6 +40,7 @@ def manipulate_USCG_data(input_data):
 
     for row in input_data:
         # Check if the row is the header row and add it to the manipulated data
+
         if row['12'] == 'Item SKU':
             manipulated_data.append(row)
         if row['12'] == 'Kit ID':
@@ -1082,60 +1083,60 @@ def manipulate_Terminix_data(input_data):
         if row['12'] == 'Item SKU':
             manipulated_data.append(row)
 
-        elif row['12'] == 'Standard':
+        elif row['12'] == 'standard':
             # Create six new rows with the specified values
             new_row_1 = row.copy()
             new_row_1['12'] = 'Headset'
             new_row_1['16'] = 'FedEx Ground w/return lbl'
-            new_row_1['21'] = '1'
-            new_row_1['22'] = 'FDEG'
-            new_row_1['24'] = 'Kevin Mitchell'
-            new_row_1['26'] = '177264750'
+            new_row_1['20'] = '1'
+            new_row_1['21'] = 'FDEG'
+            new_row_1['23'] = 'Kevin Mitchell'
+            new_row_1['25'] = '177264750'
             manipulated_data.append(new_row_1)
 
             new_row_2 = row.copy()
             new_row_2['12'] = 'Monitor'
             new_row_2['16'] = 'FedEx Ground w/return lbl'
-            new_row_2['21'] = '1'
-            new_row_2['22'] = 'FDEG'
-            new_row_2['24'] = 'Kevin Mitchell'
-            new_row_2['26'] = '177264750'
+            new_row_2['20'] = '1'
+            new_row_2['21'] = 'FDEG'
+            new_row_2['23'] = 'Kevin Mitchell'
+            new_row_2['25'] = '177264750'
             manipulated_data.append(new_row_2)
 
             new_row_3 = row.copy()
             new_row_3['12'] = 'Desktop'
             new_row_3['16'] = 'FedEx Ground w/return lbl'
-            new_row_3['21'] = '1'
-            new_row_3['22'] = 'FDEG'
-            new_row_3['24'] = 'Kevin Mitchell'
-            new_row_3['26'] = '177264750'
+            new_row_3['20'] = '1'
+            new_row_3['21'] = 'FDEG'
+            new_row_3['23'] = 'Kevin Mitchell'
+            new_row_3['25'] = '177264750'
             manipulated_data.append(new_row_3)
 
             new_row_4 = row.copy()
             new_row_4['12'] = 'Webcam'
             new_row_4['16'] = 'FedEx Ground w/return lbl'
-            new_row_4['21'] = '1'
-            new_row_4['22'] = 'FDEG'
-            new_row_4['24'] = 'Kevin Mitchell'
-            new_row_4['26'] = '177264750'
+            new_row_4['20'] = '1'
+            new_row_4['21'] = 'FDEG'
+            new_row_4['23'] = 'Kevin Mitchell'
+            new_row_4['25'] = '177264750'
             manipulated_data.append(new_row_4)
 
             new_row_5 = row.copy()
             new_row_5['12'] = 'NetCbl'
             new_row_5['16'] = 'FedEx Ground w/return lbl'
-            new_row_5['21'] = '1'
-            new_row_5['22'] = 'FDEG'
-            new_row_5['24'] = 'Kevin Mitchell'
-            new_row_5['26'] = '177264750'
+            new_row_5['20'] = '1'
+            new_row_5['21'] = 'FDEG'
+            new_row_5['23'] = 'Kevin Mitchell'
+            new_row_5['25'] = '177264750'
             manipulated_data.append(new_row_5)
 
             new_row_6 = row.copy()
             new_row_6['12'] = 'Box'
             new_row_6['16'] = 'FedEx Ground w/return lbl'
-            new_row_6['21'] = '1'
-            new_row_6['22'] = 'FDEG'
-            new_row_6['24'] = 'Kevin Mitchell'
-            new_row_6['26'] = '177264750'
+            new_row_6['20'] = '1'
+            new_row_6['21'] = 'FDEG'
+            new_row_6['23'] = 'Kevin Mitchell'
+            new_row_6['25'] = '177264750'
             manipulated_data.append(new_row_6)
 
         elif row['12'] == '2day':
@@ -1143,55 +1144,55 @@ def manipulate_Terminix_data(input_data):
             new_row_1 = row.copy()
             new_row_1['12'] = 'Headset'
             new_row_1['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_1['21'] = '1'
-            new_row_1['22'] = 'FDE'
-            new_row_1['24'] = 'Kevin Mitchell'
-            new_row_1['26'] = '177264750'
+            new_row_1['20'] = '1'
+            new_row_1['21'] = 'FDE'
+            new_row_1['23'] = 'Kevin Mitchell'
+            new_row_1['25'] = '177264750'
             manipulated_data.append(new_row_1)
 
             new_row_2 = row.copy()
             new_row_2['12'] = 'Monitor'
             new_row_2['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_2['21'] = '1'
-            new_row_2['22'] = 'FDE'
-            new_row_2['24'] = 'Kevin Mitchell'
-            new_row_2['26'] = '177264750'
+            new_row_2['20'] = '1'
+            new_row_2['21'] = 'FDE'
+            new_row_2['23'] = 'Kevin Mitchell'
+            new_row_2['25'] = '177264750'
             manipulated_data.append(new_row_2)
 
             new_row_3 = row.copy()
             new_row_3['12'] = 'Desktop'
             new_row_3['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_3['21'] = '1'
-            new_row_3['22'] = 'FDE'
-            new_row_3['24'] = 'Kevin Mitchell'
-            new_row_3['26'] = '177264750'
+            new_row_3['20'] = '1'
+            new_row_3['21'] = 'FDE'
+            new_row_3['23'] = 'Kevin Mitchell'
+            new_row_3['25'] = '177264750'
             manipulated_data.append(new_row_3)
 
             new_row_4 = row.copy()
             new_row_4['12'] = 'Webcam'
             new_row_4['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_4['21'] = '1'
-            new_row_4['22'] = 'FDE'
-            new_row_4['24'] = 'Kevin Mitchell'
-            new_row_4['26'] = '177264750'
+            new_row_4['20'] = '1'
+            new_row_4['21'] = 'FDE'
+            new_row_4['23'] = 'Kevin Mitchell'
+            new_row_4['25'] = '177264750'
             manipulated_data.append(new_row_4)
 
             new_row_5 = row.copy()
             new_row_5['12'] = 'NetCbl'
             new_row_5['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_5['21'] = '1'
-            new_row_5['22'] = 'FDE'
-            new_row_5['24'] = 'Kevin Mitchell'
-            new_row_5['26'] = '177264750'
+            new_row_5['20'] = '1'
+            new_row_5['21'] = 'FDE'
+            new_row_5['23'] = 'Kevin Mitchell'
+            new_row_5['25'] = '177264750'
             manipulated_data.append(new_row_5)
 
             new_row_6 = row.copy()
             new_row_6['12'] = 'Box'
             new_row_6['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_6['21'] = '1'
-            new_row_6['22'] = 'FDE'
-            new_row_6['24'] = 'Kevin Mitchell'
-            new_row_6['26'] = '177264750'
+            new_row_6['20'] = '1'
+            new_row_6['21'] = 'FDE'
+            new_row_6['23'] = 'Kevin Mitchell'
+            new_row_6['25'] = '177264750'
             manipulated_data.append(new_row_6)
 
         elif row['12'] == 'overnight':
@@ -1199,55 +1200,55 @@ def manipulate_Terminix_data(input_data):
             new_row_1 = row.copy()
             new_row_1['12'] = 'Headset'
             new_row_1['16'] = 'Overnight Priority w/return lbl'
-            new_row_1['21'] = '1'
-            new_row_1['22'] = 'FDE'
-            new_row_1['24'] = 'Kevin Mitchell'
-            new_row_1['26'] = '177264750'
+            new_row_1['20'] = '1'
+            new_row_1['21'] = 'FDE'
+            new_row_1['23'] = 'Kevin Mitchell'
+            new_row_1['25'] = '177264750'
             manipulated_data.append(new_row_1)
 
             new_row_2 = row.copy()
             new_row_2['12'] = 'Monitor'
             new_row_2['16'] = 'Overnight Priority w/return lbl'
-            new_row_2['21'] = '1'
-            new_row_2['22'] = 'FDE'
-            new_row_2['24'] = 'Kevin Mitchell'
-            new_row_2['26'] = '177264750'
+            new_row_2['20'] = '1'
+            new_row_2['21'] = 'FDE'
+            new_row_2['23'] = 'Kevin Mitchell'
+            new_row_2['25'] = '177264750'
             manipulated_data.append(new_row_2)
 
             new_row_3 = row.copy()
             new_row_3['12'] = 'Desktop'
             new_row_3['16'] = 'Overnight Priority w/return lbl'
-            new_row_3['21'] = '1'
-            new_row_3['22'] = 'FDE'
-            new_row_3['24'] = 'Kevin Mitchell'
-            new_row_3['26'] = '177264750'
+            new_row_3['20'] = '1'
+            new_row_3['21'] = 'FDE'
+            new_row_3['23'] = 'Kevin Mitchell'
+            new_row_3['25'] = '177264750'
             manipulated_data.append(new_row_3)
 
             new_row_4 = row.copy()
             new_row_4['12'] = 'Webcam'
             new_row_4['16'] = 'Overnight Priority w/return lbl'
-            new_row_4['21'] = '1'
-            new_row_4['22'] = 'FDE'
-            new_row_4['24'] = 'Kevin Mitchell'
-            new_row_4['26'] = '177264750'
+            new_row_4['20'] = '1'
+            new_row_4['21'] = 'FDE'
+            new_row_4['23'] = 'Kevin Mitchell'
+            new_row_4['25'] = '177264750'
             manipulated_data.append(new_row_4)
 
             new_row_5 = row.copy()
             new_row_5['12'] = 'NetCbl'
             new_row_5['16'] = 'Overnight Priority w/return lbl'
-            new_row_5['21'] = '1'
-            new_row_5['22'] = 'FDE'
-            new_row_5['24'] = 'Kevin Mitchell'
-            new_row_5['26'] = '177264750'
+            new_row_5['20'] = '1'
+            new_row_5['21'] = 'FDE'
+            new_row_5['23'] = 'Kevin Mitchell'
+            new_row_5['25'] = '177264750'
             manipulated_data.append(new_row_5)
 
             new_row_6 = row.copy()
             new_row_6['12'] = 'Box'
             new_row_6['16'] = 'Overnight Priority w/return lbl'
-            new_row_6['21'] = '1'
-            new_row_6['22'] = 'FDE'
-            new_row_6['24'] = 'Kevin Mitchell'
-            new_row_6['26'] = '177264750'
+            new_row_6['20'] = '1'
+            new_row_6['21'] = 'FDE'
+            new_row_6['23'] = 'Kevin Mitchell'
+            new_row_6['25'] = '177264750'
             manipulated_data.append(new_row_6)
 
 
@@ -1256,7 +1257,7 @@ def manipulate_Terminix_data(input_data):
 
             # If row 12 does not match the specified values, add an "Error" row
 
-            if row['12'] not in ['Standard','2day','overnight','Item SKU',
+            if row['12'] not in ['standard','2day','overnight','Item SKU',
 
                                  ]:
 
@@ -1399,7 +1400,6 @@ def show_error_with_image():
     error_window = customtkinter.CTkToplevel(root)
     error_window.title("Error")
     error_window.geometry("500x500")
-    error_window.iconbitmap('images/Lambda.ico')
     error_image = customtkinter.CTkImage(light_image=Image.open('images/anthonymod.jpg'), dark_image=Image.open('images/anthonymod.jpg'),
                                     size=(300, 300))
     error_label = customtkinter.CTkLabel(error_window, text="", image=error_image)
