@@ -1,14 +1,12 @@
 # This order converter app imports CSV files with Kit ID's and converts the order to a SKU based CSV upload.
 # Created by Dusty Baker December 2023
 #Updated by Dusty Baker March 2024 to add Terminix order converter
-import customtkinter
+import csv
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-import csv
+import customtkinter
 from PIL import Image
-
-
 
 customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -18,7 +16,7 @@ error_added = False
 
 
 
-
+#funtinon to read a csv file to a dictionary to be used in the program
 def read_csv_to_dict(input_file):
     data = []
     with open(input_file, 'r') as csv_file:
@@ -27,6 +25,14 @@ def read_csv_to_dict(input_file):
             data.append(row)
     return data
 
+#function to read a template csv data to a dictionary to be used in the program
+def read_template_csv_to_dict(input_file):
+    template_data = []
+    with open(input_file, 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            template_data.append(row)
+    return template_data
 
 def manipulate_USCG_data(input_data):
     manipulated_data = []
@@ -1268,6 +1274,16 @@ def manipulate_Terminix_data(input_data):
 
     return manipulated_data
 
+## VA HARDWARE_______________________________________________________________________________________________________
+def manipulate_va_data(input_data):
+    #read a csv file shipment.csv
+    template_data = read_template_csv_to_dict('shipment.csv')
+    manipulated_data = []
+    global error_added
+
+
+
+
 
 def write_csv_from_dict(output_file, output_data, fieldnames):
     with open(output_file, 'w', newline='') as csv_file:
@@ -1302,6 +1318,19 @@ def convert_Terminix_csv(input_path, output_path):
     # Write the manipulated data to a new CSV file
     write_csv_from_dict(output_path, manipulated_data, fieldnames)
 
+    def convert_va_csv(input_path,output_path):
+        # Read data from the input CSV file into a dictionary
+        input_data = read_csv_to_dict(input_path)
+
+        # Manipulate the data
+        manipulated_data = manipulate_Terminix_data(input_data)
+
+        # Get the field names from the input data
+        fieldnames = input_data[0].keys() if input_data else []
+
+        # Write the manipulated data to a new CSV file
+        write_csv_from_dict(output_path, manipulated_data, fieldnames)
+
 # create a function that creates a tkinter button that calls the convert_csv function
 def USCG_convert_button_click():
     global error_added  # Declare error_added as a global variable
@@ -1318,7 +1347,7 @@ def USCG_convert_button_click():
 
     # if error_added is True, show an error message
     if error_added:
-        messagebox.showinfo(title="Error", message="Womp Womp...Errors have been detected. \nPlease review the CSV file.")
+        show_error_with_image()
 
     # Reset error_added to False
     error_added = False
@@ -1339,14 +1368,52 @@ def Terminix_convert_button_click():
 
     # if error_added is True, show an error message
     if error_added:
-        messagebox.showinfo(title="Error", message="Womp Womp...Errors have been detected. \nPlease review the CSV file..")
+        show_error_with_image()
 
     # Reset error_added to False
     error_added = False
 
+# create a function that creates a tkinter button that calls the convert_csv function for VA HARDWARE
+def VA_convert_button_click():
+    global error_added  # Declare error_added as a global variable
+    # Get the input and output file paths
+    input_path = filedialog.askopenfilename(title="Select Input File for VA Hardware", filetypes=[("CSV Files", "*.csv")])
+    output_path = filedialog.asksaveasfilename(title="Select Output File", defaultextension=".csv",
+                                               filetypes=[("CSV Files", "*.csv")])
+
+    # Convert the CSV file
+    convert_va_csv(input_path, output_path)
+
+    # Show a success message
+    messagebox.showinfo(title="Successful conversion", message="Just anther step in the long climb to Liberty!")
+
+    # if error_added is True, show an error message
+    if error_added:
+        show_error_with_image()
+
+    # Reset error_added to False
+    error_added = False
+
+def show_error_with_image():
+    # Create a new top-level window
+    error_window = customtkinter.CTkToplevel(root)
+    error_window.title("Error")
+    error_window.geometry("500x500")
+    error_window.iconbitmap('images/Lambda.ico')
+    error_image = customtkinter.CTkImage(light_image=Image.open('images/anthonymod.jpg'), dark_image=Image.open('images/anthonymod.jpg'),
+                                    size=(300, 300))
+    error_label = customtkinter.CTkLabel(error_window, text="", image=error_image)
+    error_label.pack(side='top', pady=20)
+    error_message = customtkinter.CTkLabel(error_window, text="Womp Womp...Errors have been detected. \nPlease review the CSV file.")
+    error_message.pack(side='top', pady=20)
 
 
 
+
+
+
+
+## GUI_______________________________________________________________________________________________________
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
 root.geometry("500x500")
@@ -1363,35 +1430,49 @@ My_tab.pack(expand=1, fill="both")
 #create a tab
 tab_1 = My_tab.add("USCG")
 tab_2 = My_tab.add("Terminix")
+tab_3 = My_tab.add("VA Hardware")
 
-
-# background image for tab_1
+## BACKGROUNDS___________________________________________________________________________________________
+# background image for tab_1 / USCG
 USCG_image = customtkinter.CTkImage(light_image=Image.open('images/background.png'), dark_image=Image.open('images/background.png'),
                                   size=(300, 300))
 
 USCG_label = customtkinter.CTkLabel(tab_1, text="", image=USCG_image)
 USCG_label.pack(side='top', pady=20)
 
-# Background image for tab_2
+# Background image for tab_2 / Terminix
 terminix_image = customtkinter.CTkImage(light_image=Image.open('images/terminix.jpg'), dark_image=Image.open('images/terminix.jpg'),
                                   size=(450, 200))
 
 terminix_label = customtkinter.CTkLabel(tab_2, text="", image=terminix_image)
 terminix_label.pack(side='top', pady=20)
 
+# Background for tab_3 / VA Hardware
+VA_image = customtkinter.CTkImage(light_image=Image.open('images/va.png'), dark_image=Image.open('images/va.png'),
+                                  size=(450, 100))
+
+VA_label = customtkinter.CTkLabel(tab_3, text="", image=VA_image)
+VA_label.pack(side='top', pady=20)
 
 
-# Create a button that calls the convert_csv function for USCG
+
+# Create a button that calls the convert_csv function for USCG_______________________________
 convert_button = customtkinter.CTkButton(tab_1,
                                          text="Convert CSV", command=USCG_convert_button_click,
                                          border_width=2, border_color="gold")
 convert_button.pack(side='bottom', pady=20)
 
-# Create a button that calls the convert_csv function for USCG
+# Create a button that calls the convert_csv function for Terminix_____________________________
 Convert_button_terminix = customtkinter.CTkButton(tab_2,
                                                   text="Convert CSV", command=Terminix_convert_button_click,
                                                  border_width=2, border_color="Red", fg_color="green")
 Convert_button_terminix.pack(side='bottom', pady=20)
+
+# Create a button that calls the convert_csv function for VA Hardware________________________
+Convert_button_VA = customtkinter.CTkButton(tab_3,
+                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                 border_width=2, border_color="Red")
+Convert_button_VA.pack(side='bottom', pady=20)
 
 def main():
     # Create a custom Tkinter window
