@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['Order_converter.py'],
+    ['Order_Converter.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -21,7 +21,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='Order_converter',
+    name='Order_Converter',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

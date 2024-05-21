@@ -41,9 +41,7 @@ def manipulate_USCG_data(input_data):
     for row in input_data:
         # Check if the row is the header row and add it to the manipulated data
 
-        if row['12'] == 'Item SKU':
-            manipulated_data.append(row)
-        if row['12'] == 'Kit ID':
+        if row['12'] == 'Item SKU' or row['12'] == 'Kit ID':
             manipulated_data.append(row)
 
         elif row['12'] == 'SO-001':
@@ -1397,7 +1395,8 @@ def VA_convert_button_click():
 
 def show_error_with_image():
     # Create a new top-level window
-    error_window = customtkinter.CTkToplevel(root)
+    error_window = customtkinter.CTkToplevel()
+    error_window.attributes('-topmost', True)
     error_window.title("Error")
     error_window.geometry("500x500")
     error_image = customtkinter.CTkImage(light_image=Image.open('images/anthonymod.jpg'), dark_image=Image.open('images/anthonymod.jpg'),
@@ -1446,6 +1445,11 @@ terminix_image = customtkinter.CTkImage(light_image=Image.open('images/terminix.
 
 terminix_label = customtkinter.CTkLabel(tab_2, text="", image=terminix_image)
 terminix_label.pack(side='top', pady=20)
+
+# Legend for tab_2 / Terminix
+terminix_legend = customtkinter.CTkLabel(tab_2, text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
+                                                     "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
+terminix_legend.pack(side='top', pady=20)
 
 # Background for tab_3 / VA Hardware
 VA_image = customtkinter.CTkImage(light_image=Image.open('images/va.png'), dark_image=Image.open('images/va.png'),
