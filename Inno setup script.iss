@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dusty's Order Converter"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.21"
 #define MyAppPublisher "Lambda labs"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Order_converter.exe"
