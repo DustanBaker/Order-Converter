@@ -1273,16 +1273,6 @@ def manipulate_Terminix_data(input_data):
 
     return manipulated_data
 
-## VA HARDWARE_______________________________________________________________________________________________________
-def manipulate_va_data(input_data):
-    #read a csv file shipment.csv
-    template_data = read_template_csv_to_dict('shipment.csv')
-    manipulated_data = []
-    global error_added
-
-
-
-
 
 def write_csv_from_dict(output_file, output_data, fieldnames):
     with open(output_file, 'w', newline='') as csv_file:
@@ -1317,18 +1307,7 @@ def convert_Terminix_csv(input_path, output_path):
     # Write the manipulated data to a new CSV file
     write_csv_from_dict(output_path, manipulated_data, fieldnames)
 
-    def convert_va_csv(input_path,output_path):
-        # Read data from the input CSV file into a dictionary
-        input_data = read_csv_to_dict(input_path)
 
-        # Manipulate the data
-        manipulated_data = manipulate_Terminix_data(input_data)
-
-        # Get the field names from the input data
-        fieldnames = input_data[0].keys() if input_data else []
-
-        # Write the manipulated data to a new CSV file
-        write_csv_from_dict(output_path, manipulated_data, fieldnames)
 
 # create a function that creates a tkinter button that calls the convert_csv function
 def USCG_convert_button_click():
@@ -1373,25 +1352,7 @@ def Terminix_convert_button_click():
     error_added = False
 
 # create a function that creates a tkinter button that calls the convert_csv function for VA HARDWARE
-def VA_convert_button_click():
-    global error_added  # Declare error_added as a global variable
-    # Get the input and output file paths
-    input_path = filedialog.askopenfilename(title="Select Input File for VA Hardware", filetypes=[("CSV Files", "*.csv")])
-    output_path = filedialog.asksaveasfilename(title="Select Output File", defaultextension=".csv",
-                                               filetypes=[("CSV Files", "*.csv")])
 
-    # Convert the CSV file
-    convert_va_csv(input_path, output_path)
-
-    # Show a success message
-    messagebox.showinfo(title="Successful conversion", message="Just anther step in the long climb to Liberty!")
-
-    # if error_added is True, show an error message
-    if error_added:
-        show_error_with_image()
-
-    # Reset error_added to False
-    error_added = False
 
 def show_error_with_image():
     # Create a new top-level window
@@ -1419,7 +1380,7 @@ root.geometry("500x500")
 root.iconbitmap('images/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Convert your CSV file for Mantis upload")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.3, Now with Shipping options!")
 Header_Label1.pack(pady=5)
 
 #create a tab view with custom tkinter
@@ -1429,7 +1390,7 @@ My_tab.pack(expand=1, fill="both")
 #create a tab
 tab_1 = My_tab.add("USCG")
 tab_2 = My_tab.add("Terminix")
-tab_3 = My_tab.add("VA Hardware")
+tab_3 = My_tab.add("Shipping")
 
 ## BACKGROUNDS___________________________________________________________________________________________
 # background image for tab_1 / USCG
@@ -1451,13 +1412,18 @@ terminix_legend = customtkinter.CTkLabel(tab_2, text="standard = ground w/return
                                                      "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
 terminix_legend.pack(side='top', pady=20)
 
-# Background for tab_3 / VA Hardware
-VA_image = customtkinter.CTkImage(light_image=Image.open('images/va.png'), dark_image=Image.open('images/va.png'),
-                                  size=(450, 100))
+## Background image for tab_3 / Shipping
+UPS_image = customtkinter.CTkImage(light_image=Image.open('images/ups.png'), dark_image=Image.open('images/ups.png'),
+                                    size=(200, 125))
 
-VA_label = customtkinter.CTkLabel(tab_3, text="", image=VA_image)
-VA_label.pack(side='top', pady=20)
+UPS_label = customtkinter.CTkLabel(tab_3, text="", image=UPS_image)
+UPS_label.place(x=20, y=100)
 
+FedEx_image = customtkinter.CTkImage(light_image=Image.open('images/fedex.png'), dark_image=Image.open('images/fedex.png'),
+                                    size=(200, 100))
+
+FedEx_label = customtkinter.CTkLabel(tab_3, text="", image=FedEx_image)
+FedEx_label.place(x=250, y=100)
 
 
 # Create a button that calls the convert_csv function for USCG_______________________________
@@ -1472,11 +1438,20 @@ Convert_button_terminix = customtkinter.CTkButton(tab_2,
                                                  border_width=2, border_color="Red", fg_color="green")
 Convert_button_terminix.pack(side='bottom', pady=20)
 
-# Create a button that calls the convert_csv function for VA Hardware________________________
-Convert_button_VA = customtkinter.CTkButton(tab_3,
+# Create a button that calls the convert_csv function for UPS batch file conversion________________________
+Convert_button_UPS = customtkinter.CTkButton(tab_3,
                                                   text="Convert CSV", command=Terminix_convert_button_click,
-                                                 border_width=2, border_color="Red")
-Convert_button_VA.pack(side='bottom', pady=20)
+                                                 border_width=2, border_color="#FFB500", fg_color="#351C15")
+Convert_button_UPS.place(x=50, y=300)
+
+# Create a button that calls the convert_csv function for FedEx batch file conversion________________________
+Convert_button_FedEx = customtkinter.CTkButton(tab_3,
+                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                 border_width=2, border_color="#FF6600", fg_color="#4D148C")
+Convert_button_FedEx.place(x=280, y=300)
+
+
+
 
 def main():
     # Create a custom Tkinter window
