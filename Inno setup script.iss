@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dusty's Order Converter"
-#define MyAppVersion "1.21"
+#define MyAppVersion "1.4"
 #define MyAppPublisher "Lambda labs"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Order_converter.exe"
@@ -25,7 +25,7 @@ LicenseFile=C:\Users\dusty\PycharmProjects\Order-Converter\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=C:\Users\dusty\PycharmProjects\Order-Converter
-OutputBaseFilename=Dusty's_Order_Converter_WINDOWS_1.2_SETUP
+OutputBaseFilename=Dusty's_Order_Converter_WINDOWS_1.4_SETUP
 SetupIconFile=C:\Users\dusty\PycharmProjects\Order-Converter\images\Lambda.ico
 Compression=lzma
 SolidCompression=yes
