@@ -1400,20 +1400,14 @@ def Terminix_convert_button_click():
 
 
 
-
-
-
-
-
-
 ## GUI_______________________________________________________________________________________________________
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
-root.geometry("500x500")
+root.geometry("600x600")
 root.iconbitmap('images/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.3, Now with Shipping options!")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.3, Now with Shipping options\n garunteed to work 60% of the time, every time!")
 Header_Label1.pack(pady=5)
 
 #create a tab view with custom tkinter
@@ -1423,7 +1417,7 @@ My_tab.pack(expand=1, fill="both")
 #create a tab
 tab_1 = My_tab.add("USCG")
 tab_2 = My_tab.add("Terminix")
-tab_3 = My_tab.add("Shipping")
+tab_3 = My_tab.add("UPS")
 
 ## BACKGROUNDS___________________________________________________________________________________________
 # background image for tab_1 / USCG
@@ -1445,18 +1439,12 @@ terminix_legend = customtkinter.CTkLabel(tab_2, text="standard = ground w/return
                                                      "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
 terminix_legend.pack(side='top', pady=20)
 
-## Background image for tab_3 / Shipping
+## Background image for tab_3 / UPS
 UPS_image = customtkinter.CTkImage(light_image=Image.open('images/ups.png'), dark_image=Image.open('images/ups.png'),
-                                    size=(200, 125))
+                                    size=(300, 175))
 
 UPS_label = customtkinter.CTkLabel(tab_3, text="", image=UPS_image)
-UPS_label.place(x=20, y=100)
-
-FedEx_image = customtkinter.CTkImage(light_image=Image.open('images/fedex.png'), dark_image=Image.open('images/fedex.png'),
-                                    size=(200, 100))
-
-FedEx_label = customtkinter.CTkLabel(tab_3, text="", image=FedEx_image)
-FedEx_label.place(x=250, y=100)
+UPS_label.pack(side='top', pady=10)
 
 
 # Create a button that calls the convert_csv function for USCG_______________________________
@@ -1471,17 +1459,33 @@ Convert_button_terminix = customtkinter.CTkButton(tab_2,
                                                  border_width=2, border_color="Red", fg_color="green")
 Convert_button_terminix.pack(side='bottom', pady=20)
 
+# create a drop down menu for shipping accounts
+Third_party_shipping = customtkinter.CTkComboBox(tab_3, values=["Select account", "Premier", "Strivr", "Bank Of America"])
+Third_party_shipping.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the weight of the package
+Weight = customtkinter.CTkEntry(tab_3,placeholder_text="Weight of packages in lbs", width=180)
+Weight.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the length of the package
+Length = customtkinter.CTkEntry(tab_3,placeholder_text="Length of packages in inches", width=180)
+Length.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the width of the package
+Width = customtkinter.CTkEntry(tab_3,placeholder_text="Width of packages in inches", width=180)
+Width.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the height of the package
+Height = customtkinter.CTkEntry(tab_3,placeholder_text="Height of packages in inches", width=180)
+Height.pack(side='top', pady=10)
+
 # Create a button that calls the convert_csv function for UPS batch file conversion________________________
 Convert_button_UPS = customtkinter.CTkButton(tab_3,
                                                   text="Convert CSV", command=Terminix_convert_button_click,
                                                  border_width=2, border_color="#FFB500", fg_color="#351C15")
-Convert_button_UPS.place(x=50, y=300)
+Convert_button_UPS.pack(side='bottom', pady=20)
 
-# Create a button that calls the convert_csv function for FedEx batch file conversion________________________
-Convert_button_FedEx = customtkinter.CTkButton(tab_3,
-                                                  text="Convert CSV", command=Terminix_convert_button_click,
-                                                 border_width=2, border_color="#FF6600", fg_color="#4D148C")
-Convert_button_FedEx.place(x=280, y=300)
+
 
 
 
