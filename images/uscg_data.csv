@@ -1,0 +1,87 @@
+Kit ID,SKU,Service level,Shippable,Carrier,PM,account number
+SO-001,210-BFWP,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SO-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SO-002,210-BFWP,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SO-003,210-BFWP,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SO-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SO-004,210-BFWP,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SO-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SR-001,210-BGBL,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SR-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SR-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SR-002,210-BGBL,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SR-003,210-BGBL,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SR-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SR-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SR-004,210-BGBL,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SR-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SR-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SRR-001,210-BCFT,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRR-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRR-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRR-002,210-BCFT,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SRR-003,210-BCFT,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRR-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRR-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRR-004,210-BCFT,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SRR-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SRR-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SRRL-001,210-BCFT-SRRL,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRRL-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRRL-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRRL-002,210-BCFT-SRRL,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SRRL-003,210-BCFT-SRRL,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRRL-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRRL-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRRL-004,210-BCFT-SRRL,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SRRL-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SRRL-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SE-001,210-AMDT,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SE-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SE-002,210-AMDT,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SE-003,210-AMDT,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SE-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SE-004,210-AMDT,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SE-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+AE-001,210-AMDT-AE,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AE-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AE-002,210-AMDT-AE,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+AE-003,210-AMDT-AE,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AE-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AE-004,210-AMDT-AE,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+AE-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+RE-001,210-BGGU,FedEx 2Day,1,FDE,Dusty Baker,791214637
+RE-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+RE-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+RE-002,210-BGGU,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+RE-003,210-BGGU,FedEx 2Day,1,FDE,Dusty Baker,791214637
+RE-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+RE-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+RE-004,210-BGGU,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+RE-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+RE-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+K-001,210-BFWY,FedEx 2Day,1,FDE,Dusty Baker,791214637
+K-002,210-BFWY,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+K-003,210-BFWY,FedEx 2Day,1,FDE,Dusty Baker,791214637
+K-004,210-BFWY,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SRV-001,210-BGGU,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRV-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRV-002,210-BGGU,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SRV-003,210-BGGU,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SRV-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+SRV-004,210-BGGU,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SRV-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+ARV-001,210-BGGU-ARV,FedEx 2Day,1,FDE,Dusty Baker,791214637
+ARV-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+ARV-002,210-BGGU-ARV,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+ARV-003,210-BGGU-ARV,FedEx 2Day,1,FDE,Dusty Baker,791214637
+ARV-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+ARV-004,210-BGGU-ARV,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+ARV-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+SVDI-001,210-BCXC,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SVDI-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SVDI-002,210-BCXC,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+SVDI-003,210-BCXC,FedEx 2Day,1,FDE,Dusty Baker,791214637
+SVDI-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+SVDI-004,210-BCXC,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+SVDI-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637

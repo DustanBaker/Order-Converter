@@ -16,6 +16,23 @@ customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), da
 # Initialize error_added at the top level of your script
 error_added = False
 
+# Function to read a csv file to a dictionary to determine the save file name for eagle
+def read_projects_csv_to_dict(input_file):
+    projects_dict = {}
+
+    with open(input_file, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        project_numbers = next(csv_reader)  # Read the first row
+        project_names = next(csv_reader)  # Read the second row
+
+        for project_num, project_name in zip(project_numbers, project_names):
+            projects_dict[int(project_num)] = project_name
+
+    return projects_dict
+
+# Load projects.csv and define projects_dict globally
+projects_file_path = 'images/projects.csv'
+projects_dict = read_projects_csv_to_dict(projects_file_path)
 
 
 #funtinon to read a csv file to a dictionary to be used in the program
@@ -1205,19 +1222,31 @@ def write_csv_from_dict(output_file, output_data, fieldnames):
         csv_writer.writerows(output_data)
 
 
-def check_additional_commas_within_strings(input_file):
+# create a function that reads a CSV file into a dictionary and removes additional commas
+def check_and_remove_additional_commas(input_file):
+    cleaned_data = []
+
     with open(input_file, 'r') as csv_file:
         reader = csv.reader(csv_file)
         header = next(reader)
-        errors = []
+        cleaned_data.append(header)
 
-        for line_num, row in enumerate(reader, start=2):  # Start from 2 to account for the header row
-            for col_num, value in enumerate(row):
-                # Check if there are commas within the string
-                if ',' in value:
-                    errors.append(f"Error: Comma found in row {line_num}, column {col_num + 1}")
+        for row in reader:
+            cleaned_row = [value.replace(',', '') for value in row]
+            cleaned_data.append(cleaned_row)
 
-        return errors
+    return cleaned_data
+
+# create a function that writes a cleaned CSV file
+def write_cleaned_csv(output_file, cleaned_data):
+    with open(output_file, 'w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerows(cleaned_data)
+
+# create a function that checks for additional commas within strings
+def clean_csv_commas(input_path, output_path):
+    cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(output_path, cleaned_data)
 
 def USCG_Error_Handling(input_file):
     with open(input_file, 'r') as csv_file:
@@ -1294,32 +1323,14 @@ def convert_Terminix_csv(input_path, output_path):
     write_csv_from_dict(output_path, manipulated_data, fieldnames)
 
 
-# create a function that shows an error message with an image
-def show_error_with_image():
-    # Create a new top-level window
-    error_window = customtkinter.CTkToplevel()
-    error_window.attributes('-topmost', True)
-    error_window.title("Error")
-    error_window.geometry("500x500")
-    error_image = customtkinter.CTkImage(light_image=Image.open('images/anthonymod.jpg'), dark_image=Image.open('images/anthonymod.jpg'),
-                                    size=(300, 300))
-    error_label = customtkinter.CTkLabel(error_window, text="", image=error_image)
-    error_label.pack(side='top', pady=20)
-    error_message = customtkinter.CTkLabel(error_window, text="Womp Womp...Errors have been detected. \nPlease review the CSV file.")
-    error_message.pack(side='top', pady=20)
-
-
 # create a function that creates a tkinter button that calls the convert_csv function
 def USCG_convert_button_click():
     global error_added  # Declare error_added as a global variable
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
-    # Check for additional commas within strings
-    errors = check_additional_commas_within_strings(input_path)
-    if errors:
-        messagebox.showerror(title="CSV Error", message="\n".join(errors))
-        return
+    # Clean the input file to remove additional commas
+    clean_csv_commas(input_path, input_path)
 
     # Check for correct USCG kit ID
     errors = USCG_Error_Handling(input_path)
@@ -1360,18 +1371,16 @@ def Terminix_convert_button_click():
     # Get the input and output file paths
     input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
 
-    # Check for additional commas within strings
-    errors = check_additional_commas_within_strings(input_path)
-    if errors:
-        messagebox.showerror(title="CSV Error", message="\n".join(errors))
-        return
+    # Clean the input file to remove additional commas
+    clean_csv_commas(input_path, input_path)
 
     # Check for correct Terminix kit ID
     errors = Terminix_error_handling(input_path)
     if errors:
         messagebox.showerror(title="CSV Error", message="\n".join(errors))
         return
-        # Create the default output file path
+
+    # Create the default output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
     default_directory = r"T:\3PL Files\Shipment Template"
     default_filename = f"Terminix Shipment {current_date}.csv"
@@ -1379,8 +1388,8 @@ def Terminix_convert_button_click():
 
     try:
         # Attempt to save to the default path
-        convert_USCG_csv(input_path, default_output_path)
-        messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {default_output_path}")
+        convert_Terminix_csv(input_path, default_output_path)
+        messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {default_output_path}")
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
         output_base_path = filedialog.asksaveasfilename(
@@ -1394,8 +1403,58 @@ def Terminix_convert_button_click():
             return  # User cancelled the save dialog
 
         # Save to the selected path
-        convert_USCG_csv(input_path, output_base_path)
+        convert_Terminix_csv(input_path, output_base_path)
         messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {output_base_path}")
+
+##
+def Eagle_button_click():
+    global projects_dict
+
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    # Clean the input file to remove additional commas
+    clean_csv_commas(input_path, input_path)
+
+    # Read the third row, first column to get the project number
+    with open(input_path, 'r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        next(csv_reader)  # Skip the first row
+        next(csv_reader)  # Skip the second row
+        third_row = next(csv_reader)  # Read the third row
+        project_number = int(third_row[0])  # Assuming project number is an integer
+
+    # Map the project number to the project name using projects_dict
+    project_name = projects_dict.get(project_number, "Unknown_Project")
+
+    # Create the output file path
+    current_date = datetime.now().strftime("%m-%d-%Y")
+    default_directory = r"T:\3PL Files\Shipment Template"
+    default_filename = f"{project_name} Shipment {current_date}.csv"
+    output_path = os.path.join(default_directory, default_filename)
+
+    # Save the cleaned CSV file with the appropriate name
+    try:
+        os.makedirs(default_directory, exist_ok=True)
+        write_cleaned_csv(output_path, check_and_remove_additional_commas(input_path))
+        messagebox.showinfo(title="Success", message=f"File saved successfully at {output_path}")
+    except (OSError, IOError):
+        # If the default path is unavailable, ask the user for the output directory and base filename
+        output_base_path = filedialog.asksaveasfilename(
+            title="Select Output Directory and Base Filename",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return  # User cancelled the save dialog
+
+        # Save to the selected path
+        write_cleaned_csv(output_base_path, check_and_remove_additional_commas(input_path))
+        messagebox.showinfo(title="Success", message=f"File saved successfully at {output_base_path}\n Suck it Mantis!")
 
 
 
@@ -1407,7 +1466,7 @@ root.geometry("600x600")
 root.iconbitmap('images/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.3, Now with Shipping options\n garunteed to work 60% of the time, every time!")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.4, Now with EAGLE!\n UPS tab is in Beta, please ignore.")
 Header_Label1.pack(pady=5)
 
 #create a tab view with custom tkinter
@@ -1418,6 +1477,7 @@ My_tab.pack(expand=1, fill="both")
 tab_1 = My_tab.add("USCG")
 tab_2 = My_tab.add("Terminix")
 tab_3 = My_tab.add("UPS")
+tab_4 = My_tab.add("Eagle")
 
 ## BACKGROUNDS___________________________________________________________________________________________
 # background image for tab_1 / USCG
@@ -1445,6 +1505,14 @@ UPS_image = customtkinter.CTkImage(light_image=Image.open('images/ups.png'), dar
 
 UPS_label = customtkinter.CTkLabel(tab_3, text="", image=UPS_image)
 UPS_label.pack(side='top', pady=10)
+
+## Background image for tab_4 / Eagle
+Eagle_image = customtkinter.CTkImage(light_image=Image.open('images/eagle.jpg'), dark_image=Image.open('images/eagle.jpg'),
+                                    size=(400, 400))
+
+Eagle_label = customtkinter.CTkLabel(tab_4, text="", image=Eagle_image)
+Eagle_label.pack(side='top', pady=10)
+
 
 
 # Create a button that calls the convert_csv function for USCG_______________________________
@@ -1484,6 +1552,12 @@ Convert_button_UPS = customtkinter.CTkButton(tab_3,
                                                   text="Convert CSV", command=Terminix_convert_button_click,
                                                  border_width=2, border_color="#FFB500", fg_color="#351C15")
 Convert_button_UPS.pack(side='bottom', pady=20)
+
+# Create a button that calls the convert_csv function for Eagle csv filtering________________________
+Convert_button_Eagle = customtkinter.CTkButton(tab_4,
+                                                  text="Filter and save CSV", command=Eagle_button_click,
+                                                 border_width=2)
+Convert_button_Eagle.pack(side='bottom', pady=20)
 
 
 
