@@ -1,6 +1,6 @@
 # This order converter app imports CSV files with Kit ID's and converts the order to a SKU based CSV upload.
 # Created by Dusty Baker December 2023
-#Updated by Dusty Baker March 2024 to add Terminix order converter
+#Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
 import csv
 from tkinter import *
 from tkinter import filedialog
@@ -31,7 +31,7 @@ def read_projects_csv_to_dict(input_file):
     return projects_dict
 
 # Load projects.csv and define projects_dict globally
-projects_file_path = 'images/projects.csv'
+projects_file_path = 'assets/projects.csv'
 projects_dict = read_projects_csv_to_dict(projects_file_path)
 
 
@@ -1463,7 +1463,7 @@ def Eagle_button_click():
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
 root.geometry("600x600")
-root.iconbitmap('images/Lambda.ico')
+root.iconbitmap('assets/Lambda.ico')
 
 # Create label
 Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.4, Now with EAGLE!\n UPS tab is in Beta, please ignore.")
@@ -1481,14 +1481,14 @@ tab_4 = My_tab.add("Eagle")
 
 ## BACKGROUNDS___________________________________________________________________________________________
 # background image for tab_1 / USCG
-USCG_image = customtkinter.CTkImage(light_image=Image.open('images/background.png'), dark_image=Image.open('images/background.png'),
+USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'), dark_image=Image.open('assets/background.png'),
                                   size=(300, 300))
 
 USCG_label = customtkinter.CTkLabel(tab_1, text="", image=USCG_image)
 USCG_label.pack(side='top', pady=20)
 
 # Background image for tab_2 / Terminix
-terminix_image = customtkinter.CTkImage(light_image=Image.open('images/terminix.jpg'), dark_image=Image.open('images/terminix.jpg'),
+terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'), dark_image=Image.open('assets/terminix.jpg'),
                                   size=(450, 200))
 
 terminix_label = customtkinter.CTkLabel(tab_2, text="", image=terminix_image)
@@ -1500,14 +1500,14 @@ terminix_legend = customtkinter.CTkLabel(tab_2, text="standard = ground w/return
 terminix_legend.pack(side='top', pady=20)
 
 ## Background image for tab_3 / UPS
-UPS_image = customtkinter.CTkImage(light_image=Image.open('images/ups.png'), dark_image=Image.open('images/ups.png'),
+UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'), dark_image=Image.open('assets/ups.png'),
                                     size=(300, 175))
 
 UPS_label = customtkinter.CTkLabel(tab_3, text="", image=UPS_image)
 UPS_label.pack(side='top', pady=10)
 
 ## Background image for tab_4 / Eagle
-Eagle_image = customtkinter.CTkImage(light_image=Image.open('images/eagle.jpg'), dark_image=Image.open('images/eagle.jpg'),
+Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'), dark_image=Image.open('assets/eagle.jpg'),
                                     size=(400, 400))
 
 Eagle_label = customtkinter.CTkLabel(tab_4, text="", image=Eagle_image)
