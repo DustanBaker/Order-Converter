@@ -1,6 +1,6 @@
 # This order converter app imports CSV files with Kit ID's and converts the order to a SKU based CSV upload.
 # Created by Dusty Baker December 2023
-#Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
+# Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
 import csv
 import os
 from datetime import datetime
@@ -13,9 +13,10 @@ from PIL import Image
 customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
-# Initialize error_added at the top level of your script
+# Initialize error_added variable to keep track of whether an error message has been added
 error_added = False
 
+errors = []
 
 
 
@@ -31,6 +32,36 @@ except UnicodeDecodeError:
     projects = pd.read_csv('assets/projects.csv', encoding='ISO-8859-1')
     uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='ISO-8859-1')
     terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='ISO-8859-1')
+
+# Functinon to define the maximum number of characters in a column
+allowable_lengths = {
+    '4': 70,
+    '5': 30,
+    '6': 64,
+    '7': 64,
+    '8': 32,
+    '9': 32,
+    '10': 32,
+    '11': 32,
+    '12': 20,
+    '14': 64,
+    '15': 64,
+    '16': 64,
+    '17': 64,
+    '18': 64,
+    '19': 255,
+    '21': 64,
+    '22': 11,
+    '23': 64,
+    '24': 64,
+    '25': 64,
+    '26': 64,
+    '27': 11,
+    '28': 64,
+    '29': 64,
+    '30': 64,
+    '31': 64
+}
 
 
 # Function to manipulate the input uscg data using the template
@@ -93,6 +124,20 @@ def write_cleaned_csv(output_file, cleaned_data):
     # Write the DataFrame to a CSV file
     cleaned_data.to_csv(output_file, index=False)
 
+# Function to check the length of characters in a column
+def check_character_length(df, length_dict, errors):
+    for column, max_length in length_dict.items():
+        if column in df.columns:
+            # Check if any cell in the column exceeds the maximum allowable length
+            exceeds_length = df[column].astype(str).apply(len) > max_length
+            if exceeds_length.any():
+                # Add an error with the index and value of the cell(s) that exceed the length
+                error_rows = df[exceeds_length].index.tolist()
+                error_values = df.loc[error_rows, column].tolist()
+                for row, value in zip(error_rows, error_values):
+                    errors.append(f"Column '{column}' row {row + 2} exceeds allowable length of {max_length} characters."
+                                  f"\nError value: '{value}'")
+
 
 def USCG_Error_Handling(input_file):
     # Read the CSV file into a DataFrame
@@ -135,37 +180,56 @@ def Terminix_error_handling(input_file):
 
 # Function to convert USCG CSV using pandas and the template
 def convert_USCG_csv(input_path, output_path, template):
-    # clean the commas from the input file
-    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
+    # Clean the commas from the input file
+    cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Read the CSV file into the pandas DataFrame
     input_data = pd.read_csv(input_path)
+
+    # Initialize errors list
+    errors = []
+
+    # Check the character length of the columns in the cleaned data
+    check_character_length(input_data, allowable_lengths, errors)
+
+    # If there are errors, raise a ValueError
+    if errors:
+        raise ValueError("\n".join(errors))
 
     # Manipulate the data using the template
     manipulated_data = manipulate_uscg_data_using_template(input_data, template)
 
     # Write the manipulated data to a new CSV file
     manipulated_data.to_csv(output_path, index=False)
-
 def convert_Terminix_csv(input_path, output_path, template):
-    # clean the commas from the input file
-    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
+    # Clean the commas from the input file
+    cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Read the CSV file into the pandas DataFrame
     input_data = pd.read_csv(input_path)
 
+    # Initialize errors list
+    errors = []
+
+    # Check the character length of the columns in the cleaned data
+    check_character_length(input_data, allowable_lengths, errors)
+
+    # If there are errors, raise a ValueError
+    if errors:
+        raise ValueError("\n".join(errors))
+
     # Manipulate the data using the template
-    manipulated_data = manipulate_uscg_data_using_template(input_data, template)
+    manipulated_data = manipulate_terminix_data_using_template(input_data, template)
 
     # Write the manipulated data to a new CSV file
     manipulated_data.to_csv(output_path, index=False)
-
 
 
 # Create a function that creates a tkinter button that calls the convert_csv function for USCG
 def USCG_convert_button_click():
-    global error_added  # Declare error_added as a global variable
-    # Get the input file path
+    global error_added
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
     # Check for correct USCG kit ID
@@ -181,39 +245,32 @@ def USCG_convert_button_click():
     default_output_path = os.path.join(default_directory, default_filename)
 
     try:
-        # Attempt to save to the default path
         convert_USCG_csv(input_path, default_output_path, uscg_template)
         messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {default_output_path}")
-    except (OSError, IOError):
-        # If the default path is unavailable, ask the user for the output directory and base filename
-        output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
-            defaultextension=".csv",
-            filetypes=[("CSV Files", "*.csv")],
-            initialfile=default_filename
-        )
+    except (OSError, IOError, ValueError) as e:
+        messagebox.showerror(title="Error", message=str(e))
+        return
 
-        if not output_base_path:
-            return  # User cancelled the save dialog
-
-        # Save to the selected path
-        convert_USCG_csv(input_path, output_base_path, uscg_template)
-        messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {output_base_path}")
-
-
-
-
-# create a function that creates a tkinter button that calls the convert_csv function for Terminix
 def Terminix_convert_button_click():
-    global error_added  # Declare error_added as a global variable
-    # Get the input file path
+    global error_added
     input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
 
-    # Clean the input file to remove additional commas
-    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
+    errors = []
+
+    try:
+        input_data = pd.read_csv(input_path)
+        check_character_length(input_data, allowable_lengths, errors)
+    except ValueError as e:
+        messagebox.showerror(title="Character Length Error", message=str(e))
+        return
+
+    # If there are errors, stop execution
+    if errors:
+        messagebox.showerror(title="Character Length Error", message="\n".join(errors))
+        return
 
     # Check for correct Terminix kit ID
-    errors = Terminix_error_handling(input_path)
+    errors.extend(Terminix_error_handling(input_path))
     if errors:
         messagebox.showerror(title="CSV Error", message="\n".join(errors))
         return
@@ -225,24 +282,14 @@ def Terminix_convert_button_click():
     default_output_path = os.path.join(default_directory, default_filename)
 
     try:
-        # Attempt to save to the default path
-        convert_Terminix_csv(input_path, default_output_path, terminix_template)  # Add the template argument here
+        convert_Terminix_csv(input_path, default_output_path, terminix_template)
         messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {default_output_path}")
-    except (OSError, IOError):
-        # If the default path is unavailable, ask the user for the output directory and base filename
-        output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
-            defaultextension=".csv",
-            filetypes=[("CSV Files", "*.csv")],
-            initialfile=default_filename
-        )
+    except (OSError, IOError, ValueError) as e:
+        messagebox.showerror(title="Error", message=str(e))
+        return
 
-        if not output_base_path:
-            return  # User cancelled the save dialog
 
-        # Save to the selected path
-        convert_Terminix_csv(input_path, output_base_path, terminix_template)  # Add the template argument here
-        messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {output_base_path}")
+
 
 # Create a functin that converts the input file to UPS format
 def UPS_convert_button_click():
@@ -269,14 +316,24 @@ def Eagle_button_click():
 
     # Clean the input file to remove additional commas
     cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
+
+    # Initialize errors list
+    errors = []
+
+    # Check the character length of the columns in the cleaned data
+    check_character_length(cleaned_data, allowable_lengths, errors)
+
+    # If there are errors, stop execution
+    if errors:
+        messagebox.showerror(title="Character Length Error", message="\n".join(errors))
+        return
 
     # Read the third row, first column to get the project number using pandas
     project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
 
     # Convert project_number to string and strip any whitespace
     project_number = str(project_number).strip()
-    print(f"Project Number from input file: '{project_number}'")
+
 
     # Ensure no extra spaces or unexpected characters in column names
     projects.columns = projects.columns.str.strip()
@@ -284,21 +341,14 @@ def Eagle_button_click():
     # Convert the 'Project Number' column to string and strip any whitespace
     projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
 
-    # Debug: Print out the unique project numbers in the projects DataFrame
-    print("Unique Project Numbers in projects DataFrame:", projects['Project Number'].unique())
-
-    # Debug: Print first few rows of the projects DataFrame
-    print("Sample rows from projects DataFrame:")
-    print(projects.head())
-
     # Map the project number to the project name using project dataframe from the projects.csv file using pandas
     try:
         project_name_row = projects[projects['Project Number'] == project_number]
-        print(f"Project Name Row: {project_name_row}")
+
 
         if not project_name_row.empty:
             project_name = project_name_row['Project Name'].values[0]
-            print(f"Project Name: {project_name}")
+
         else:
             raise IndexError("Project number not found in DataFrame")
 
@@ -339,7 +389,7 @@ def Eagle_button_click():
 
 
 
-## GUI_______________________________________________________________________________________________________
+# GUI_______________________________________________________________________________________________________
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
 root.geometry("600x600")
@@ -349,17 +399,17 @@ root.iconbitmap('assets/Lambda.ico')
 Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas!, but like super fast ones that do crossfit.")
 Header_Label1.pack(pady=5)
 
-#create a tab view with custom tkinter
+# create a tab view with custom tkinter
 My_tab = customtkinter.CTkTabview(root)
 My_tab.pack(expand=1, fill="both")
 
-#create a tab
+# create a tab
 tab_1 = My_tab.add("USCG")
 tab_2 = My_tab.add("Terminix")
 tab_3 = My_tab.add("UPS")
 tab_4 = My_tab.add("Eagle")
 
-## BACKGROUNDS___________________________________________________________________________________________
+# BACKGROUNDS___________________________________________________________________________________________
 # background image for tab_1 / USCG
 USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'), dark_image=Image.open('assets/background.png'),
                                   size=(300, 300))
