@@ -2,13 +2,13 @@
 # Created by Dusty Baker December 2023
 #Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
 import csv
-from tkinter import *
+import os
+from datetime import datetime
 from tkinter import filedialog
 from tkinter import messagebox
 import customtkinter
+import pandas as pd
 from PIL import Image
-from datetime import datetime
-import os
 
 customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -16,1321 +16,157 @@ customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), da
 # Initialize error_added at the top level of your script
 error_added = False
 
-# Function to read a csv file to a dictionary to determine the save file name for eagle
-def read_projects_csv_to_dict(input_file):
-    projects_dict = {}
 
-    with open(input_file, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        project_numbers = next(csv_reader)  # Read the first row
-        project_names = next(csv_reader)  # Read the second row
 
-        for project_num, project_name in zip(project_numbers, project_names):
-            projects_dict[int(project_num)] = project_name
 
-    return projects_dict
-
-# Load projects.csv and define projects_dict globally
-projects_file_path = 'assets/projects.csv'
-projects_dict = read_projects_csv_to_dict(projects_file_path)
-
-
-#funtinon to read a csv file to a dictionary to be used in the program
-def read_csv_to_dict(input_file):
-    data = []
-    with open(input_file, 'r') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            data.append(row)
-    return data
-
-
-def manipulate_USCG_data(input_data):
-    manipulated_data = []
-    global error_added
-
-    for row in input_data:
-        # Check if the row is the header row and add it to the manipulated data
-
-        if row['12'] == 'Item SKU' or row['12'] == 'Kit ID':
-            manipulated_data.append(row)
-
-        elif row['12'] == 'SO-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWP'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-        elif row['12'] == 'SO-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWP'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-        elif row['12'] == 'SO-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWP'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-        elif row['12'] == 'SO-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWP'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-        elif row['12'] == 'SR-001':
-            # Create Three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SR-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SR-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SR-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day w/return lbl'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'AO-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWR'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AO-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWR'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'AO-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWR'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AO-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWR'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AR-001':
-            # Create Three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL-AR'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'AR-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL-AR'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'AR-003':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL-AR'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'AR-004':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGBL-AR'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day w/return lbl'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRR-001':
-            # Create Three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRR-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SRR-003':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRR-004':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day w/return lbl'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRRL-001':
-            # Create Three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT-SRRL'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRRL-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT-SRRL'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SRRL-003':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT-SRRL'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SRRL-004':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCFT-SRRL'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day w/return lbl'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'SE-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SE-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SE-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SE-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AE-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT-AE'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AE-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT-AE'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'AE-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT-AE'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'AE-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-AMDT-AE'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'RE-001':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'RE-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'RE-003':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'RE-004':
-            # Create three new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = '210-BBBY'
-            new_row_3['16'] = 'FedEx 2Day w/return lbl'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Dusty Baker'
-            new_row_3['25'] = '791214637'
-            manipulated_data.append(new_row_3)
-
-        elif row['12'] == 'K-001':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWY'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'K-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWY'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'K-003':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWY'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'K-004':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BFWY'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SRV-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SRV-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SRV-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-
-        elif row['12'] == 'SRV-004':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'ARV-001':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU-ARV'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'ARV-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU-ARV'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'ARV-003':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU-ARV'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'ARV-004':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BGGU-ARV'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-210-AZBS'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SVDI-001':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCXC'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SVDI-002':
-            # Create one new row with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCXC'
-            new_row_1['16'] = 'Priority Overnight w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-        elif row['12'] == 'SVDI-003':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCXC'
-            new_row_1['16'] = 'FedEx 2Day'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
-
-        elif row['12'] == 'SVDI-004':
-            # Create two new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = '210-BCXC'
-            new_row_1['16'] = 'FedEx 2Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Dusty Baker'
-            new_row_1['25'] = '791214637'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = '210-BBBY'
-            new_row_2['16'] = 'FedEx 2Day w/return lbl'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Dusty Baker'
-            new_row_2['25'] = '791214637'
-            manipulated_data.append(new_row_2)
+# Try reading the CSV files with 'latin1' encoding first, then try 'ISO-8859-1' if it fails
+try:
+    ups_batch = pd.read_csv('assets/ups_batch.csv', encoding='latin1')
+    projects = pd.read_csv('assets/projects.csv', encoding='latin1')
+    uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='latin1')
+    terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='latin1')
+except UnicodeDecodeError:
+    print("Error reading the file with 'latin1' encoding. Trying 'ISO-8859-1'...")
+    ups_batch = pd.read_csv('assets/ups_batch.csv', encoding='ISO-8859-1')
+    projects = pd.read_csv('assets/projects.csv', encoding='ISO-8859-1')
+    uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='ISO-8859-1')
+    terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='ISO-8859-1')
+
+
+# Function to manipulate the input uscg data using the template
+def manipulate_uscg_data_using_template(input_data, template):
+    manipulated_data = pd.DataFrame()
+
+    for _, row in input_data.iterrows():
+        kit_id = row['12']
+        matching_template_rows = template[template['Kit ID'] == kit_id]
+
+        if matching_template_rows.empty:
+            manipulated_data = pd.concat([manipulated_data, pd.DataFrame([row])])
+        else:
+            for _, template_row in matching_template_rows.iterrows():
+                new_row = row.copy()
+                for column in template_row.index:
+                    if column in row and pd.notna(template_row[column]):
+                        new_row[column] = template_row[column]
+                manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
     return manipulated_data
 
-def manipulate_Terminix_data(input_data):
-    manipulated_data = []
-    errors = []
-    global error_added
+# Function to manipulate the input terminix data using the template
+def manipulate_terminix_data_using_template(input_data, template):
+    manipulated_data = pd.DataFrame()
 
-    for row in input_data:
-        # Check if the row is the header row and add it to the manipulated data
-        if row['12'] == 'Item SKU':
-            manipulated_data.append(row)
+    for _, row in input_data.iterrows():
+        kit_id = row['12']
+        matching_template_rows = template[template['Kit ID'] == kit_id]
 
-        elif row['12'] == 'standard':
-            # Create six new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = 'Headset'
-            new_row_1['16'] = 'FedEx Ground w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDEG'
-            new_row_1['23'] = 'Kevin Mitchell'
-            new_row_1['25'] = '177264750'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = 'Monitor'
-            new_row_2['16'] = 'FedEx Ground w/return lbl'
-            new_row_2['20'] = '1'
-            new_row_2['21'] = 'FDEG'
-            new_row_2['23'] = 'Kevin Mitchell'
-            new_row_2['25'] = '177264750'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = 'Desktop'
-            new_row_3['16'] = 'FedEx Ground w/return lbl'
-            new_row_3['20'] = '1'
-            new_row_3['21'] = 'FDEG'
-            new_row_3['23'] = 'Kevin Mitchell'
-            new_row_3['25'] = '177264750'
-            manipulated_data.append(new_row_3)
-
-            new_row_4 = row.copy()
-            new_row_4['12'] = 'Webcam'
-            new_row_4['16'] = 'FedEx Ground w/return lbl'
-            new_row_4['20'] = '1'
-            new_row_4['21'] = 'FDEG'
-            new_row_4['23'] = 'Kevin Mitchell'
-            new_row_4['25'] = '177264750'
-            manipulated_data.append(new_row_4)
-
-            new_row_5 = row.copy()
-            new_row_5['12'] = 'NetCbl'
-            new_row_5['16'] = 'FedEx Ground w/return lbl'
-            new_row_5['20'] = '1'
-            new_row_5['21'] = 'FDEG'
-            new_row_5['23'] = 'Kevin Mitchell'
-            new_row_5['25'] = '177264750'
-            manipulated_data.append(new_row_5)
-
-            new_row_6 = row.copy()
-            new_row_6['12'] = 'Box'
-            new_row_6['16'] = 'FedEx Ground w/return lbl'
-            new_row_6['20'] = '1'
-            new_row_6['21'] = 'FDEG'
-            new_row_6['23'] = 'Kevin Mitchell'
-            new_row_6['25'] = '177264750'
-            manipulated_data.append(new_row_6)
-
-        elif row['12'] == '2day':
-            # Create six new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = 'Headset'
-            new_row_1['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Kevin Mitchell'
-            new_row_1['25'] = '177264750'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = 'Monitor'
-            new_row_2['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_2['20'] = '1'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Kevin Mitchell'
-            new_row_2['25'] = '177264750'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = 'Desktop'
-            new_row_3['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_3['20'] = '1'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Kevin Mitchell'
-            new_row_3['25'] = '177264750'
-            manipulated_data.append(new_row_3)
-
-            new_row_4 = row.copy()
-            new_row_4['12'] = 'Webcam'
-            new_row_4['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_4['20'] = '1'
-            new_row_4['21'] = 'FDE'
-            new_row_4['23'] = 'Kevin Mitchell'
-            new_row_4['25'] = '177264750'
-            manipulated_data.append(new_row_4)
-
-            new_row_5 = row.copy()
-            new_row_5['12'] = 'NetCbl'
-            new_row_5['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_5['20'] = '1'
-            new_row_5['21'] = 'FDE'
-            new_row_5['23'] = 'Kevin Mitchell'
-            new_row_5['25'] = '177264750'
-            manipulated_data.append(new_row_5)
-
-            new_row_6 = row.copy()
-            new_row_6['12'] = 'Box'
-            new_row_6['16'] = 'FedEx 2 Day w/return lbl'
-            new_row_6['20'] = '1'
-            new_row_6['21'] = 'FDE'
-            new_row_6['23'] = 'Kevin Mitchell'
-            new_row_6['25'] = '177264750'
-            manipulated_data.append(new_row_6)
-
-        elif row['12'] == 'overnight':
-            # Create six new rows with the specified values
-            new_row_1 = row.copy()
-            new_row_1['12'] = 'Headset'
-            new_row_1['16'] = 'Overnight Priority w/return lbl'
-            new_row_1['20'] = '1'
-            new_row_1['21'] = 'FDE'
-            new_row_1['23'] = 'Kevin Mitchell'
-            new_row_1['25'] = '177264750'
-            manipulated_data.append(new_row_1)
-
-            new_row_2 = row.copy()
-            new_row_2['12'] = 'Monitor'
-            new_row_2['16'] = 'Overnight Priority w/return lbl'
-            new_row_2['20'] = '1'
-            new_row_2['21'] = 'FDE'
-            new_row_2['23'] = 'Kevin Mitchell'
-            new_row_2['25'] = '177264750'
-            manipulated_data.append(new_row_2)
-
-            new_row_3 = row.copy()
-            new_row_3['12'] = 'Desktop'
-            new_row_3['16'] = 'Overnight Priority w/return lbl'
-            new_row_3['20'] = '1'
-            new_row_3['21'] = 'FDE'
-            new_row_3['23'] = 'Kevin Mitchell'
-            new_row_3['25'] = '177264750'
-            manipulated_data.append(new_row_3)
-
-            new_row_4 = row.copy()
-            new_row_4['12'] = 'Webcam'
-            new_row_4['16'] = 'Overnight Priority w/return lbl'
-            new_row_4['20'] = '1'
-            new_row_4['21'] = 'FDE'
-            new_row_4['23'] = 'Kevin Mitchell'
-            new_row_4['25'] = '177264750'
-            manipulated_data.append(new_row_4)
-
-            new_row_5 = row.copy()
-            new_row_5['12'] = 'NetCbl'
-            new_row_5['16'] = 'Overnight Priority w/return lbl'
-            new_row_5['20'] = '1'
-            new_row_5['21'] = 'FDE'
-            new_row_5['23'] = 'Kevin Mitchell'
-            new_row_5['25'] = '177264750'
-            manipulated_data.append(new_row_5)
-
-            new_row_6 = row.copy()
-            new_row_6['12'] = 'Box'
-            new_row_6['16'] = 'Overnight Priority w/return lbl'
-            new_row_6['20'] = '1'
-            new_row_6['21'] = 'FDE'
-            new_row_6['23'] = 'Kevin Mitchell'
-            new_row_6['25'] = '177264750'
-            manipulated_data.append(new_row_6)
+        if matching_template_rows.empty:
+            manipulated_data = pd.concat([manipulated_data, pd.DataFrame([row])])
+        else:
+            for _, template_row in matching_template_rows.iterrows():
+                new_row = row.copy()
+                for column in template_row.index:
+                    if column in row and pd.notna(template_row[column]):
+                        new_row[column] = template_row[column]
+                manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
     return manipulated_data
-
-
-def write_csv_from_dict(output_file, output_data, fieldnames):
-    with open(output_file, 'w', newline='') as csv_file:
-        csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        csv_writer.writeheader()
-        csv_writer.writerows(output_data)
 
 
 # create a function that reads a CSV file into a dictionary and removes additional commas
 def check_and_remove_additional_commas(input_file):
-    cleaned_data = []
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(input_file)
 
-    with open(input_file, 'r') as csv_file:
-        reader = csv.reader(csv_file)
-        header = next(reader)
-        cleaned_data.append(header)
+    # Remove additional commas from all string fields
+    df = df.map(lambda x: x.replace(',', '') if isinstance(x, str) else x)
 
-        for row in reader:
-            cleaned_row = [value.replace(',', '') for value in row]
-            cleaned_data.append(cleaned_row)
-
-    return cleaned_data
+    return df
 
 # create a function that writes a cleaned CSV file
 def write_cleaned_csv(output_file, cleaned_data):
-    with open(output_file, 'w', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerows(cleaned_data)
+    # Ensure cleaned_data is a DataFrame
+    if not isinstance(cleaned_data, pd.DataFrame):
+        cleaned_data = pd.DataFrame(cleaned_data)
 
-# create a function that checks for additional commas within strings
-def clean_csv_commas(input_path, output_path):
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(output_path, cleaned_data)
+    # Write the DataFrame to a CSV file
+    cleaned_data.to_csv(output_file, index=False)
+
 
 def USCG_Error_Handling(input_file):
-    with open(input_file, 'r') as csv_file:
-        reader = csv.reader(csv_file)
-        header = next(reader)
-        errors = []
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(input_file)
 
-        valid_kit_ids = [
-            'SO-001', 'SO-002', 'SO-003', 'SO-004',
-            'SR-001', 'SR-002', 'SR-003', 'SR-004',
-            'AO-001', 'AO-002', 'AO-003', 'AO-004',
-            'AR-001', 'AR-002', 'AR-003', 'AR-004',
-            'SRR-001', 'SRR-002', 'SRR-003', 'SRR-004',
-            'SRRL-001', 'SRRL-002', 'SRRL-003', 'SRRL-004',
-            'SE-001', 'SE-002', 'SE-003', 'SE-004',
-            'AE-001', 'AE-002', 'AE-003', 'AE-004',
-            'RE-001', 'RE-002', 'RE-003', 'RE-004',
-            'K-001', 'K-002', 'K-003', 'K-004',
-            'SRV-001', 'SRV-002', 'SRV-003', 'SRV-004',
-            'ARV-001', 'ARV-002', 'ARV-003', 'ARV-004',
-            'SVDI-001', 'SVDI-002', 'SVDI-003', 'SVDI-004',
-            'Item SKU', 'Kit ID'
-        ]
+    # Define the valid kit IDs based on the template
+    valid_kit_ids = uscg_template['Kit ID'].unique()
 
-        for line_num, row in enumerate(reader, start=2):  # Start from 2 to account for the header rows
-            if len(row) > 11 and row[11] not in valid_kit_ids:
-                errors.append(f"Error: Incorrect Kit ID found in row {line_num}")
+    # Initialize an empty list to store errors
+    errors = []
 
-        return errors
+    # Iterate over the rows in the DataFrame
+    for index, row in df.iterrows():
+        # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
+        if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
+            errors.append(f"Error: Incorrect Kit ID found in row {index + 2}")  # Adding 2 to match the original line numbering
 
+    return errors
+
+
+# Functino to check for errors in the Terminix CSV file
 def Terminix_error_handling(input_file):
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(input_file)
 
-    with open(input_file, 'r') as csv_file:
-        reader = csv.reader(csv_file)
-        header = next(reader)
-        errors = []
+    # Define the valid kit IDs from the template
+    valid_kit_ids = terminix_template['Kit ID'].unique()
 
-        valid_kit_ids = [
-            'standard', '2day', 'overnight',
-            'Item SKU', 'Kit ID'
-        ]
+    # Initialize an empty list to store errors
+    errors = []
 
-        for line_num, row in enumerate(reader, start=2):  # Start from 2 to account for the header rows
-            if len(row) > 11 and row[11] not in valid_kit_ids:
-                errors.append(f"Error: Incorrect Kit ID found in row {line_num}")
+    # Iterate over the rows in the DataFrame
+    for index, row in df.iterrows():
+        # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
+        if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
+            errors.append(f"Error: Incorrect Kit ID found in row {index + 2}")  # Adding 2 to match the original line numbering
 
-        return errors
+    return errors
 
 
-def convert_USCG_csv(input_path, output_path):
-    # Read data from the input CSV file into a dictionary
-    input_data = read_csv_to_dict(input_path)
+# Function to convert USCG CSV using pandas and the template
+def convert_USCG_csv(input_path, output_path, template):
+    # clean the commas from the input file
+    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
 
-    # Manipulate the data
-    manipulated_data = manipulate_USCG_data(input_data)
+    # Read the CSV file into the pandas DataFrame
+    input_data = pd.read_csv(input_path)
 
-    # Get the field names from the input data
-    fieldnames = input_data[0].keys() if input_data else []
-
-    # Write the manipulated data to a new CSV file
-    write_csv_from_dict(output_path, manipulated_data, fieldnames)
-
-def convert_Terminix_csv(input_path, output_path):
-    # Read data from the input CSV file into a dictionary
-    input_data = read_csv_to_dict(input_path)
-
-    # Manipulate the data
-    manipulated_data = manipulate_Terminix_data(input_data)
-
-    # Get the field names from the input data
-    fieldnames = input_data[0].keys() if input_data else []
+    # Manipulate the data using the template
+    manipulated_data = manipulate_uscg_data_using_template(input_data, template)
 
     # Write the manipulated data to a new CSV file
-    write_csv_from_dict(output_path, manipulated_data, fieldnames)
+    manipulated_data.to_csv(output_path, index=False)
+
+def convert_Terminix_csv(input_path, output_path, template):
+    # clean the commas from the input file
+    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
+
+    # Read the CSV file into the pandas DataFrame
+    input_data = pd.read_csv(input_path)
+
+    # Manipulate the data using the template
+    manipulated_data = manipulate_uscg_data_using_template(input_data, template)
+
+    # Write the manipulated data to a new CSV file
+    manipulated_data.to_csv(output_path, index=False)
 
 
-# create a function that creates a tkinter button that calls the convert_csv function
+
+# Create a function that creates a tkinter button that calls the convert_csv function for USCG
 def USCG_convert_button_click():
     global error_added  # Declare error_added as a global variable
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
-
-    # Clean the input file to remove additional commas
-    clean_csv_commas(input_path, input_path)
 
     # Check for correct USCG kit ID
     errors = USCG_Error_Handling(input_path)
@@ -1346,7 +182,7 @@ def USCG_convert_button_click():
 
     try:
         # Attempt to save to the default path
-        convert_USCG_csv(input_path, default_output_path)
+        convert_USCG_csv(input_path, default_output_path, uscg_template)
         messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {default_output_path}")
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
@@ -1361,18 +197,20 @@ def USCG_convert_button_click():
             return  # User cancelled the save dialog
 
         # Save to the selected path
-        convert_USCG_csv(input_path, output_base_path)
+        convert_USCG_csv(input_path, output_base_path, uscg_template)
         messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {output_base_path}")
+
+
 
 
 # create a function that creates a tkinter button that calls the convert_csv function for Terminix
 def Terminix_convert_button_click():
     global error_added  # Declare error_added as a global variable
-    # Get the input and output file paths
+    # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
 
     # Clean the input file to remove additional commas
-    clean_csv_commas(input_path, input_path)
+    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
 
     # Check for correct Terminix kit ID
     errors = Terminix_error_handling(input_path)
@@ -1388,7 +226,7 @@ def Terminix_convert_button_click():
 
     try:
         # Attempt to save to the default path
-        convert_Terminix_csv(input_path, default_output_path)
+        convert_Terminix_csv(input_path, default_output_path, terminix_template)  # Add the template argument here
         messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {default_output_path}")
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
@@ -1403,13 +241,26 @@ def Terminix_convert_button_click():
             return  # User cancelled the save dialog
 
         # Save to the selected path
-        convert_Terminix_csv(input_path, output_base_path)
+        convert_Terminix_csv(input_path, output_base_path, terminix_template)  # Add the template argument here
         messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {output_base_path}")
 
-##
-def Eagle_button_click():
-    global projects_dict
+# Create a functin that converts the input file to UPS format
+def UPS_convert_button_click():
+    global error_added  # Declare error_added as a global variable
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File for UPS", filetypes=[("CSV Files", "*.csv")])
 
+    # Clean the input file to remove additional commas
+    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
+
+    # Check for correct UPS kit ID
+
+
+
+
+
+
+def Eagle_button_click():
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
 
@@ -1417,18 +268,43 @@ def Eagle_button_click():
         return  # User cancelled the file dialog
 
     # Clean the input file to remove additional commas
-    clean_csv_commas(input_path, input_path)
+    cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
 
-    # Read the third row, first column to get the project number
-    with open(input_path, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        next(csv_reader)  # Skip the first row
-        next(csv_reader)  # Skip the second row
-        third_row = next(csv_reader)  # Read the third row
-        project_number = int(third_row[0])  # Assuming project number is an integer
+    # Read the third row, first column to get the project number using pandas
+    project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
 
-    # Map the project number to the project name using projects_dict
-    project_name = projects_dict.get(project_number, "Unknown_Project")
+    # Convert project_number to string and strip any whitespace
+    project_number = str(project_number).strip()
+    print(f"Project Number from input file: '{project_number}'")
+
+    # Ensure no extra spaces or unexpected characters in column names
+    projects.columns = projects.columns.str.strip()
+
+    # Convert the 'Project Number' column to string and strip any whitespace
+    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+    # Debug: Print out the unique project numbers in the projects DataFrame
+    print("Unique Project Numbers in projects DataFrame:", projects['Project Number'].unique())
+
+    # Debug: Print first few rows of the projects DataFrame
+    print("Sample rows from projects DataFrame:")
+    print(projects.head())
+
+    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+    try:
+        project_name_row = projects[projects['Project Number'] == project_number]
+        print(f"Project Name Row: {project_name_row}")
+
+        if not project_name_row.empty:
+            project_name = project_name_row['Project Name'].values[0]
+            print(f"Project Name: {project_name}")
+        else:
+            raise IndexError("Project number not found in DataFrame")
+
+    except IndexError:
+        messagebox.showerror(title="Error", message=f"Project Number '{project_number}' not found.")
+        return
 
     # Create the output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
@@ -1439,8 +315,10 @@ def Eagle_button_click():
     # Save the cleaned CSV file with the appropriate name
     try:
         os.makedirs(default_directory, exist_ok=True)
-        write_cleaned_csv(output_path, check_and_remove_additional_commas(input_path))
-        messagebox.showinfo(title="Success", message=f"File saved successfully at {output_path}")
+        write_cleaned_csv(output_path, cleaned_data)
+        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_path}\n"
+                                                    "This ultimate dad energy is brought to you by Dusty Baker.")
+
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
         output_base_path = filedialog.asksaveasfilename(
@@ -1453,8 +331,10 @@ def Eagle_button_click():
             return  # User cancelled the save dialog
 
         # Save to the selected path
-        write_cleaned_csv(output_base_path, check_and_remove_additional_commas(input_path))
-        messagebox.showinfo(title="Success", message=f"File saved successfully at {output_base_path}\n Suck it Mantis!")
+        write_cleaned_csv(output_base_path, cleaned_data)
+        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_base_path}\n"
+                                                        "This ultimate dad energy is brought to you by Dusty Baker.")
+
 
 
 
@@ -1466,7 +346,7 @@ root.geometry("600x600")
 root.iconbitmap('assets/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.4, Now with EAGLE!\n UPS tab is in Beta, please ignore.")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas!, but like super fast ones that do crossfit.")
 Header_Label1.pack(pady=5)
 
 #create a tab view with custom tkinter
@@ -1549,7 +429,7 @@ Height.pack(side='top', pady=10)
 
 # Create a button that calls the convert_csv function for UPS batch file conversion________________________
 Convert_button_UPS = customtkinter.CTkButton(tab_3,
-                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                  text="Convert CSV", command=UPS_convert_button_click,
                                                  border_width=2, border_color="#FFB500", fg_color="#351C15")
 Convert_button_UPS.pack(side='bottom', pady=20)
 

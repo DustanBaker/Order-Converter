@@ -1,0 +1,20 @@
+Kit ID,12,16,20,21,23,25
+Item SKU,Item SKU,Service level,Shippable,Carrier,PM,account number
+standard,Headset,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+standard,Monitor,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+standard,Desktop,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+standard,Webcam,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+standard,NetCbl,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+standard,Box,FedEx Ground w/return lbl,1,FDEG,Kevin Mitchell,177264750
+2day,Headset,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+2day,Monitor,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+2day,Desktop,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+2day,Webcam,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+2day,NetCbl,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+2day,Box,FedEx 2 Day w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,Headset,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,Monitor,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,Desktop,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,Webcam,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,NetCbl,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750
+overnight,Box,Overnight Priority w/return lbl,1,FDE,Kevin Mitchell,177264750

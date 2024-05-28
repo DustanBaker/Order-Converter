@@ -1,4 +1,5 @@
-Kit ID,SKU,Service level,Shippable,Carrier,PM,account number
+Kit ID,12,16,20,21,23,25
+Item SKU,Item SKU,Service level,Shippable,Carrier,PM,account number
 SO-001,210-BFWP,FedEx 2Day,1,FDE,Dusty Baker,791214637
 SO-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
 SO-002,210-BFWP,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
@@ -16,6 +17,23 @@ SR-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
 SR-004,210-BGBL,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
 SR-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
 SR-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+AO-001,210-BFWR,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AO-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AO-002,210-BFWR,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+AO-003,210-BFWR,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AO-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AO-004,210-BFWR,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+AO-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+AR-001,210-BGBL-AR,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AR-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+AR-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AR-002,210-BGBL-AR,Priority Overnight w/return lbl,1,FDE,Dusty Baker,791214637
+AR-003,210-BGBL-AR,FedEx 2Day,1,FDE,Dusty Baker,791214637
+AR-003,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
+AR-003,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
+AR-004,210-BGBL-AR,FedEx 2Day w/return lbl,1,FDE,Dusty Baker,791214637
+AR-004,210-AZBS,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
+AR-004,210-BBBY,FedEx 2Day w/return lbl,,FDE,Dusty Baker,791214637
 SRR-001,210-BCFT,FedEx 2Day,1,FDE,Dusty Baker,791214637
 SRR-001,210-AZBS,FedEx 2Day,,FDE,Dusty Baker,791214637
 SRR-001,210-BBBY,FedEx 2Day,,FDE,Dusty Baker,791214637
