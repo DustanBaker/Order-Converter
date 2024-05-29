@@ -1,5 +1,5 @@
 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
-Project Name,Reference Number,Ship Date,Ship-to Name,Ship-to Name 2,Ship-to Addr 1,Ship-to Addr 2,Ship-to City,Ship-to State,Ship-to Zip,Ship-to Country,Item SKU,Qty,PO,Order Number,Service Level,IFCAP #,Clin,Comments 1,Shippable,Carrier,LPN,PM,WO #,Account #,Lot #,OuterLPN,Site,RITM,Persona,Reference #
-45,1,,"Sus,an",817-420-6969,"1 air fa,rce drive",suite 69,Dallas,TX,75254,,standard,1,,, ,,,, ,,,,,,,,,,,
-45,2,,"Sus,an 2",817-420-6969,2 air farce drive,suite 69,Dallas,TX,75254,,2day,1,,, ,,,, ,,,,,,,,,,,
-45,3,,"Su,san 3",817-420-6969,3 air farce drive,suite 69,Dallas,TX,75254,,overnight,1,,, ,,,, ,,,,,,,,,,,
+Project Name,Reference Number,Ship Date,Ship-to Name,Ship-to Name 2,Ship-to Addr 1,Ship-to Addr 2,Ship-to City,Ship-to State,Ship-to Zip,Ship-to Country,Item S,Qty,PO,Order Number,Service Level,IFCAP #,Clin,Comments 1,Shippable,Carrier,LPN,PM,WO #,Account #,Lot #,OuterLPN,Site,RITM,Persona,Reference #
+45,1,,Susan,817-420-6969,1 air farce drive,suite 69,Dallas,TX,75254,,standard,1,,, ,,,, ,,,,,,,,,,,
+45,2,,Susan 2,817-420-6969,2 air farce drive,suite 69,Dallas,TX,75254,,2day,1,,, ,,,, ,,,,,,,,,,,
+45,3,,Susan 3,817-420-6969,3 air farce drive,suite 69,Dallas,TX,75254,,overnight,1,,, ,,,, ,,,,,,,,,,,

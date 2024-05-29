@@ -63,12 +63,16 @@ allowable_lengths = {
     '31': 64
 }
 
+# Extract the data from column 31
+uscg_template['31'] = uscg_template.iloc[:, 7]  # Assuming column index is zero-based
 
 # Function to manipulate the input uscg data using the template
 def manipulate_uscg_data_using_template(input_data, template):
-    manipulated_data = pd.DataFrame()
+    # Copy the first row under the header without manipulation
+    manipulated_data = pd.DataFrame([input_data.iloc[0]])
 
-    for _, row in input_data.iterrows():
+    # Iterate over the rest of the input data starting from the second row
+    for _, row in input_data.iloc[1:].iterrows():
         kit_id = row['12']
         matching_template_rows = template[template['Kit ID'] == kit_id]
 
@@ -77,18 +81,22 @@ def manipulate_uscg_data_using_template(input_data, template):
         else:
             for _, template_row in matching_template_rows.iterrows():
                 new_row = row.copy()
-                for column in template_row.index:
-                    if column in row and pd.notna(template_row[column]):
-                        new_row[column] = template_row[column]
+                # Find the corresponding row in uscg_template to get the column 31 value
+                column_31_value = template.loc[template['Kit ID'] == kit_id, '31'].values[0]
+                # Prepend the column 31 value to the existing data
+                new_row['31'] = f"{column_31_value}{new_row['31']}"
                 manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
     return manipulated_data
 
+
 # Function to manipulate the input terminix data using the template
 def manipulate_terminix_data_using_template(input_data, template):
-    manipulated_data = pd.DataFrame()
+    # Copy the first row under the header without manipulation
+    manipulated_data = pd.DataFrame([input_data.iloc[0]])
 
-    for _, row in input_data.iterrows():
+    # Iterate over the rest of the input data starting from the second row
+    for _, row in input_data.iloc[1:].iterrows():
         kit_id = row['12']
         matching_template_rows = template[template['Kit ID'] == kit_id]
 
@@ -140,8 +148,8 @@ def check_character_length(df, length_dict, errors):
 
 
 def USCG_Error_Handling(input_file):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(input_file)
+    # Read the CSV file into a DataFrame, skipping the first row after the header
+    df = pd.read_csv(input_file, skiprows=[1])
 
     # Define the valid kit IDs based on the template
     valid_kit_ids = uscg_template['Kit ID'].unique()
@@ -153,15 +161,15 @@ def USCG_Error_Handling(input_file):
     for index, row in df.iterrows():
         # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
         if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
-            errors.append(f"Error: Incorrect Kit ID found in row {index + 2}")  # Adding 2 to match the original line numbering
+            errors.append(f"Error: Incorrect Kit ID found in row {index + 3}")  # Adding 3 to match the original line numbering
 
     return errors
 
 
 # Functino to check for errors in the Terminix CSV file
 def Terminix_error_handling(input_file):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(input_file)
+    # Read the CSV file into a DataFrame, skipping the first row after the header
+    df = pd.read_csv(input_file, skiprows=[1])
 
     # Define the valid kit IDs from the template
     valid_kit_ids = terminix_template['Kit ID'].unique()
@@ -173,7 +181,7 @@ def Terminix_error_handling(input_file):
     for index, row in df.iterrows():
         # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
         if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
-            errors.append(f"Error: Incorrect Kit ID found in row {index + 2}")  # Adding 2 to match the original line numbering
+            errors.append(f"Error: Incorrect Kit ID found in row {index + 3}")  # Adding 2 to match the original line numbering
 
     return errors
 
@@ -307,7 +315,7 @@ def UPS_convert_button_click():
 
 
 
-def Eagle_button_click():
+def Eagle_shipment_button_click():
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
 
@@ -387,16 +395,95 @@ def Eagle_button_click():
 
 
 
+def Eagle_WO_button_click():
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    # Clean the input file to remove additional commas
+    cleaned_data = check_and_remove_additional_commas(input_path)
+
+    # Initialize errors list
+    errors = []
+
+    # Check the character length of the columns in the cleaned data
+    check_character_length(cleaned_data, allowable_lengths, errors)
+
+    # If there are errors, stop execution
+    if errors:
+        messagebox.showerror(title="Character Length Error", message="\n".join(errors))
+        return
+
+    # Read the third row, first column to get the project number using pandas
+    project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
+
+    # Convert project_number to string and strip any whitespace
+    project_number = str(project_number).strip()
+
+
+    # Ensure no extra spaces or unexpected characters in column names
+    projects.columns = projects.columns.str.strip()
+
+    # Convert the 'Project Number' column to string and strip any whitespace
+    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+    try:
+        project_name_row = projects[projects['Project Number'] == project_number]
+
+
+        if not project_name_row.empty:
+            project_name = project_name_row['Project Name'].values[0]
+
+        else:
+            raise IndexError("Project number not found in DataFrame")
+
+    except IndexError:
+        messagebox.showerror(title="Error", message=f"Project Number '{project_number}' not found.")
+        return
+
+    # Create the output file path
+    current_date = datetime.now().strftime("%m-%d-%Y")
+    default_directory = r"T:\3PL Files\Shipment Template"
+    default_filename = f"{project_name} Work Order {current_date}.csv"
+    output_path = os.path.join(default_directory, default_filename)
+
+    # Save the cleaned CSV file with the appropriate name
+    try:
+        os.makedirs(default_directory, exist_ok=True)
+        write_cleaned_csv(output_path, cleaned_data)
+        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_path}\n"
+                                                    "This ultimate dad energy is brought to you by Dusty Baker.")
+
+    except (OSError, IOError):
+        # If the default path is unavailable, ask the user for the output directory and base filename
+        output_base_path = filedialog.asksaveasfilename(
+            title="Select Output Directory and Base Filename",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return  # User cancelled the save dialog
+
+        # Save to the selected path
+        write_cleaned_csv(output_base_path, cleaned_data)
+        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_base_path}\n"
+                                                        "This ultimate dad energy is brought to you by Dusty Baker.")
+
+
 
 
 # GUI_______________________________________________________________________________________________________
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
-root.geometry("600x600")
+root.geometry("600x650")
 root.iconbitmap('assets/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas!, but like super fast ones that do crossfit.")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas!\nbut like super fast ones that do crossfit.")
 Header_Label1.pack(pady=5)
 
 # create a tab view with custom tkinter
@@ -483,11 +570,20 @@ Convert_button_UPS = customtkinter.CTkButton(tab_3,
                                                  border_width=2, border_color="#FFB500", fg_color="#351C15")
 Convert_button_UPS.pack(side='bottom', pady=20)
 
-# Create a button that calls the convert_csv function for Eagle csv filtering________________________
-Convert_button_Eagle = customtkinter.CTkButton(tab_4,
-                                                  text="Filter and save CSV", command=Eagle_button_click,
+# Create a button that calls the convert_csv function for Eagle csv filtering and save as a Work Order_________________
+Work_order_button_Eagle = customtkinter.CTkButton(tab_4,
+                                                  text="Filter and save Work Order", command=Eagle_WO_button_click,
                                                  border_width=2)
-Convert_button_Eagle.pack(side='bottom', pady=20)
+Work_order_button_Eagle.pack(side='bottom', pady=10)
+
+# Create a button that calls the convert_csv function for Eagle csv filtering and save as shipment_____________________
+Shipment_button_Eagle = customtkinter.CTkButton(tab_4,
+                                                  text="Filter and save Shipment", command=Eagle_shipment_button_click,
+                                                 border_width=2)
+Shipment_button_Eagle.pack(side='bottom', pady=10)
+
+
+
 
 
 
