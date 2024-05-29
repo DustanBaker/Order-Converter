@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dusty's Order Converter"
-#define MyAppVersion "1.4"
+#define MyAppVersion "1.5"
 #define MyAppPublisher "Lambda labs"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Order_converter.exe"
@@ -25,8 +25,8 @@ LicenseFile=C:\Users\dusty\PycharmProjects\Order-Converter\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=C:\Users\dusty\PycharmProjects\Order-Converter
-OutputBaseFilename=Dusty's_Order_Converter_WINDOWS_1.4_SETUP
-SetupIconFile=C:\Users\dusty\PycharmProjects\Order-Converter\images\Lambda.ico
+OutputBaseFilename=Dusty's_Order_Converter_WINDOWS_1.5_SETUP
+SetupIconFile=C:\Users\dusty\PycharmProjects\Order-Converter\assets\Lambda.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -39,7 +39,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\dusty\PycharmProjects\Order-Converter\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\dusty\PycharmProjects\Order-Converter\images\*"; DestDir: "{app}/images"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\dusty\PycharmProjects\Order-Converter\assets\*"; DestDir: "{app}/assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

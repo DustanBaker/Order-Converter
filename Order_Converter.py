@@ -240,10 +240,34 @@ def USCG_convert_button_click():
     global error_added
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
+    if not input_path:
+        return  # User cancelled the file dialog
+
     # Check for correct USCG kit ID
     errors = USCG_Error_Handling(input_path)
     if errors:
         messagebox.showerror(title="CSV Error", message="\n".join(errors))
+        return
+
+    try:
+        # Clean the commas from the input file
+        cleaned_data = check_and_remove_additional_commas(input_path)
+        write_cleaned_csv(input_path, cleaned_data)
+
+        # Read the cleaned data into a DataFrame
+        input_data = pd.read_csv(input_path)
+
+        # Initialize errors list
+        errors = []
+
+        # Check the character length of the columns in the cleaned data
+        check_character_length(input_data, allowable_lengths, errors)
+
+        # If there are errors, raise a ValueError
+        if errors:
+            raise ValueError("\n".join(errors))
+    except (OSError, IOError, ValueError) as e:
+        messagebox.showerror(title="Error", message=str(e))
         return
 
     # Create the default output file path
@@ -252,35 +276,60 @@ def USCG_convert_button_click():
     default_filename = f"USCG Shipment {current_date}.csv"
     default_output_path = os.path.join(default_directory, default_filename)
 
+    # Check if the default directory exists
+    if not os.path.exists(default_directory):
+        # Prompt the user to choose a file path if the default path is not available
+        output_base_path = filedialog.asksaveasfilename(
+            title="Select Output Directory and Base Filename",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return  # User cancelled the save dialog
+    else:
+        output_base_path = default_output_path
+
     try:
-        convert_USCG_csv(input_path, default_output_path, uscg_template)
-        messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {default_output_path}")
+        convert_USCG_csv(input_path, output_base_path, uscg_template)
+        messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {output_base_path}")
     except (OSError, IOError, ValueError) as e:
         messagebox.showerror(title="Error", message=str(e))
-        return
+
+
+
 
 def Terminix_convert_button_click():
     global error_added
     input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
 
-    errors = []
+    if not input_path:
+        return  # User cancelled the file dialog
 
     try:
+        # Clean the commas from the input file
+        cleaned_data = check_and_remove_additional_commas(input_path)
+        write_cleaned_csv(input_path, cleaned_data)
+
+        # Read the cleaned data into a DataFrame
         input_data = pd.read_csv(input_path)
+
+        # Initialize errors list
+        errors = []
+
+        # Check the character length of the columns in the cleaned data
         check_character_length(input_data, allowable_lengths, errors)
-    except ValueError as e:
-        messagebox.showerror(title="Character Length Error", message=str(e))
-        return
 
-    # If there are errors, stop execution
-    if errors:
-        messagebox.showerror(title="Character Length Error", message="\n".join(errors))
-        return
+        # If there are errors, raise a ValueError
+        if errors:
+            raise ValueError("\n".join(errors))
 
-    # Check for correct Terminix kit ID
-    errors.extend(Terminix_error_handling(input_path))
-    if errors:
-        messagebox.showerror(title="CSV Error", message="\n".join(errors))
+        # Check for correct Terminix kit ID
+        errors.extend(Terminix_error_handling(input_path))
+        if errors:
+            raise ValueError("\n".join(errors))
+    except (OSError, IOError, ValueError) as e:
+        messagebox.showerror(title="Error", message=str(e))
         return
 
     # Create the default output file path
@@ -289,12 +338,26 @@ def Terminix_convert_button_click():
     default_filename = f"Terminix Shipment {current_date}.csv"
     default_output_path = os.path.join(default_directory, default_filename)
 
+    # Check if the default directory exists
+    if not os.path.exists(default_directory):
+        # Prompt the user to choose a file path if the default path is not available
+        output_base_path = filedialog.asksaveasfilename(
+            title="Select Output Directory and Base Filename",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return  # User cancelled the save dialog
+    else:
+        output_base_path = default_output_path
+
     try:
-        convert_Terminix_csv(input_path, default_output_path, terminix_template)
-        messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {default_output_path}")
+        convert_Terminix_csv(input_path, output_base_path, terminix_template)
+        messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {output_base_path}")
     except (OSError, IOError, ValueError) as e:
         messagebox.showerror(title="Error", message=str(e))
-        return
+
 
 
 
