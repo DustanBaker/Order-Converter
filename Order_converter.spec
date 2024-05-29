@@ -34,5 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['images\\Lambda.ico'],
+    icon=['assets\\Lambda.ico'],
 )
