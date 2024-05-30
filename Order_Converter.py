@@ -9,9 +9,22 @@ from tkinter import messagebox
 import customtkinter
 import pandas as pd
 from PIL import Image
+import pygame
+import sys
+import time
 
 customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+
+# Initialize pygame
+pygame.mixer.init()
+
+# Load the sound file
+notification = pygame.mixer.Sound('assets/Propaganda.mp3')
+intro = pygame.mixer.Sound('assets/LiberTea.mp3')
+
+
+
 
 # Initialize error_added variable to keep track of whether an error message has been added
 error_added = False
@@ -81,10 +94,16 @@ def manipulate_uscg_data_using_template(input_data, template):
         else:
             for _, template_row in matching_template_rows.iterrows():
                 new_row = row.copy()
-                # Find the corresponding row in uscg_template to get the column 31 value
-                column_31_value = template.loc[template['Kit ID'] == kit_id, '31'].values[0]
-                # Prepend the column 31 value to the existing data
-                new_row['31'] = f"{column_31_value}{new_row['31']}"
+
+                # Update new_row with values from template_row where not NaN
+                for column in template_row.index:
+                    if column in row and pd.notna(template_row[column]):
+                        new_row[column] = template_row[column]
+
+                # Prepend the column 31 value to the existing data in the input row
+                if '31' in new_row and '31' in template_row:
+                    new_row['31'] = f"{template_row['31']}{row['31']}"
+
                 manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
     return manipulated_data
@@ -280,7 +299,7 @@ def USCG_convert_button_click():
     if not os.path.exists(default_directory):
         # Prompt the user to choose a file path if the default path is not available
         output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
+            title="Save output file",
             defaultextension=".csv",
             filetypes=[("CSV Files", "*.csv")],
             initialfile=default_filename
@@ -292,7 +311,7 @@ def USCG_convert_button_click():
 
     try:
         convert_USCG_csv(input_path, output_base_path, uscg_template)
-        messagebox.showinfo(title="Semper Paratus", message=f"File saved successfully at {output_base_path}")
+        Success_window(f"File saved successfully at\n{output_base_path}")
     except (OSError, IOError, ValueError) as e:
         messagebox.showerror(title="Error", message=str(e))
 
@@ -342,7 +361,7 @@ def Terminix_convert_button_click():
     if not os.path.exists(default_directory):
         # Prompt the user to choose a file path if the default path is not available
         output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
+            title="Save output file",
             defaultextension=".csv",
             filetypes=[("CSV Files", "*.csv")],
             initialfile=default_filename
@@ -354,7 +373,7 @@ def Terminix_convert_button_click():
 
     try:
         convert_Terminix_csv(input_path, output_base_path, terminix_template)
-        messagebox.showinfo(title="Sweet Liberty!", message=f"File saved successfully at {output_base_path}")
+        Success_window(f"File saved successfully at\n{output_base_path}")
     except (OSError, IOError, ValueError) as e:
         messagebox.showerror(title="Error", message=str(e))
 
@@ -387,6 +406,7 @@ def Eagle_shipment_button_click():
 
     # Clean the input file to remove additional commas
     cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Initialize errors list
     errors = []
@@ -437,13 +457,12 @@ def Eagle_shipment_button_click():
     try:
         os.makedirs(default_directory, exist_ok=True)
         write_cleaned_csv(output_path, cleaned_data)
-        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_path}\n"
-                                                    "This ultimate dad energy is brought to you by Dusty Baker.")
+        Success_window(f"File saved successfully at {output_path}")
 
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
         output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
+            title="Save Output File as Shipment",
             defaultextension=".csv",
             filetypes=[("CSV Files", "*.csv")],
             initialfile=default_filename
@@ -453,8 +472,7 @@ def Eagle_shipment_button_click():
 
         # Save to the selected path
         write_cleaned_csv(output_base_path, cleaned_data)
-        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_base_path}\n"
-                                                        "This ultimate dad energy is brought to you by Dusty Baker.")
+        Success_window(f"File saved successfully at\n{output_base_path}")
 
 
 
@@ -467,6 +485,7 @@ def Eagle_WO_button_click():
 
     # Clean the input file to remove additional commas
     cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Initialize errors list
     errors = []
@@ -517,13 +536,12 @@ def Eagle_WO_button_click():
     try:
         os.makedirs(default_directory, exist_ok=True)
         write_cleaned_csv(output_path, cleaned_data)
-        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_path}\n"
-                                                    "This ultimate dad energy is brought to you by Dusty Baker.")
+        Success_window("File saved successfully at\n{output_path}")
 
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
         output_base_path = filedialog.asksaveasfilename(
-            title="Select Output Directory and Base Filename",
+            title="Save Output File as Work Order",
             defaultextension=".csv",
             filetypes=[("CSV Files", "*.csv")],
             initialfile=default_filename
@@ -533,8 +551,7 @@ def Eagle_WO_button_click():
 
         # Save to the selected path
         write_cleaned_csv(output_base_path, cleaned_data)
-        messagebox.showinfo(title="An Eagle never misses", message=f"File saved successfully at {output_base_path}\n"
-                                                        "This ultimate dad energy is brought to you by Dusty Baker.")
+        Success_window(f"File saved successfully at\n{output_base_path}")
 
 
 
@@ -546,7 +563,7 @@ root.geometry("600x650")
 root.iconbitmap('assets/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas!\nbut like super fast ones that do crossfit.")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas and LiberTea!")
 Header_Label1.pack(pady=5)
 
 # create a tab view with custom tkinter
@@ -554,103 +571,120 @@ My_tab = customtkinter.CTkTabview(root)
 My_tab.pack(expand=1, fill="both")
 
 # create a tab
-tab_1 = My_tab.add("USCG")
-tab_2 = My_tab.add("Terminix")
-tab_3 = My_tab.add("UPS")
-tab_4 = My_tab.add("Eagle")
+tab_1 = My_tab.add("The Eagle")
+tab_2 = My_tab.add("USCG")
+tab_3 = My_tab.add("Terminix")
+tab_4 = My_tab.add("UPS")
 
-# BACKGROUNDS___________________________________________________________________________________________
-# background image for tab_1 / USCG
-USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'), dark_image=Image.open('assets/background.png'),
-                                  size=(300, 300))
-
-USCG_label = customtkinter.CTkLabel(tab_1, text="", image=USCG_image)
-USCG_label.pack(side='top', pady=20)
-
-# Background image for tab_2 / Terminix
-terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'), dark_image=Image.open('assets/terminix.jpg'),
-                                  size=(450, 200))
-
-terminix_label = customtkinter.CTkLabel(tab_2, text="", image=terminix_image)
-terminix_label.pack(side='top', pady=20)
-
-# Legend for tab_2 / Terminix
-terminix_legend = customtkinter.CTkLabel(tab_2, text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
-                                                     "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
-terminix_legend.pack(side='top', pady=20)
-
-## Background image for tab_3 / UPS
-UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'), dark_image=Image.open('assets/ups.png'),
-                                    size=(300, 175))
-
-UPS_label = customtkinter.CTkLabel(tab_3, text="", image=UPS_image)
-UPS_label.pack(side='top', pady=10)
-
-## Background image for tab_4 / Eagle
+# TAB 1 / The EAGLE_________________________________________________________________________________________
+## Background image for tab_1 / Eagle
 Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'), dark_image=Image.open('assets/eagle.jpg'),
                                     size=(400, 400))
 
-Eagle_label = customtkinter.CTkLabel(tab_4, text="", image=Eagle_image)
+Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
 Eagle_label.pack(side='top', pady=10)
 
-
-
-# Create a button that calls the convert_csv function for USCG_______________________________
-convert_button = customtkinter.CTkButton(tab_1,
-                                         text="Convert CSV", command=USCG_convert_button_click,
-                                         border_width=2, border_color="gold")
-convert_button.pack(side='bottom', pady=20)
-
-# Create a button that calls the convert_csv function for Terminix_____________________________
-Convert_button_terminix = customtkinter.CTkButton(tab_2,
-                                                  text="Convert CSV", command=Terminix_convert_button_click,
-                                                 border_width=2, border_color="Red", fg_color="green")
-Convert_button_terminix.pack(side='bottom', pady=20)
-
-# create a drop down menu for shipping accounts
-Third_party_shipping = customtkinter.CTkComboBox(tab_3, values=["Select account", "Premier", "Strivr", "Bank Of America"])
-Third_party_shipping.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the weight of the package
-Weight = customtkinter.CTkEntry(tab_3,placeholder_text="Weight of packages in lbs", width=180)
-Weight.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the length of the package
-Length = customtkinter.CTkEntry(tab_3,placeholder_text="Length of packages in inches", width=180)
-Length.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the width of the package
-Width = customtkinter.CTkEntry(tab_3,placeholder_text="Width of packages in inches", width=180)
-Width.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the height of the package
-Height = customtkinter.CTkEntry(tab_3,placeholder_text="Height of packages in inches", width=180)
-Height.pack(side='top', pady=10)
-
-# Create a button that calls the convert_csv function for UPS batch file conversion________________________
-Convert_button_UPS = customtkinter.CTkButton(tab_3,
-                                                  text="Convert CSV", command=UPS_convert_button_click,
-                                                 border_width=2, border_color="#FFB500", fg_color="#351C15")
-Convert_button_UPS.pack(side='bottom', pady=20)
-
-# Create a button that calls the convert_csv function for Eagle csv filtering and save as a Work Order_________________
-Work_order_button_Eagle = customtkinter.CTkButton(tab_4,
+# Create a button that calls the convert_csv function for Eagle csv filtering and save as a Work Order
+Work_order_button_Eagle = customtkinter.CTkButton(tab_1,
                                                   text="Filter and save Work Order", command=Eagle_WO_button_click,
                                                  border_width=2)
 Work_order_button_Eagle.pack(side='bottom', pady=10)
 
-# Create a button that calls the convert_csv function for Eagle csv filtering and save as shipment_____________________
-Shipment_button_Eagle = customtkinter.CTkButton(tab_4,
+# Create a button that calls the convert_csv function for Eagle csv filtering and save as shipment
+Shipment_button_Eagle = customtkinter.CTkButton(tab_1,
                                                   text="Filter and save Shipment", command=Eagle_shipment_button_click,
                                                  border_width=2)
 Shipment_button_Eagle.pack(side='bottom', pady=10)
 
 
+# TAB 2 / USCG_____________________________________________________________________________________________
+# background image for tab_2 / USCG
+USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'), dark_image=Image.open('assets/background.png'),
+                                  size=(300, 300))
+
+USCG_label = customtkinter.CTkLabel(tab_2, text="", image=USCG_image)
+USCG_label.pack(side='top', pady=20)
+
+# Create a button that calls the convert_csv function for USCG
+convert_button = customtkinter.CTkButton(tab_2,
+                                         text="Convert CSV", command=USCG_convert_button_click,
+                                         border_width=2, border_color="gold")
+convert_button.pack(side='bottom', pady=20)
+
+# TAB 3 / Terminix_________________________________________________________________________________________
+# Background image for tab_3 / Terminix
+terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'), dark_image=Image.open('assets/terminix.jpg'),
+                                  size=(450, 200))
+
+terminix_label = customtkinter.CTkLabel(tab_3, text="", image=terminix_image)
+terminix_label.pack(side='top', pady=20)
+
+# Legend for tab_2 / Terminix
+terminix_legend = customtkinter.CTkLabel(tab_3, text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
+                                                     "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
+terminix_legend.pack(side='top', pady=20)
+
+# Create a button that calls the convert_csv function for Terminix
+Convert_button_terminix = customtkinter.CTkButton(tab_3,
+                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                 border_width=2, border_color="Red", fg_color="green")
+Convert_button_terminix.pack(side='bottom', pady=20)
+
+# TAB 4 / UPS_____________________________________________________________________________________________
+## Background image for tab_3 / UPS
+UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'), dark_image=Image.open('assets/ups.png'),
+                                    size=(300, 175))
+
+UPS_label = customtkinter.CTkLabel(tab_4, text="", image=UPS_image)
+UPS_label.pack(side='top', pady=10)
+
+# create a drop down menu for shipping accounts
+Third_party_shipping = customtkinter.CTkComboBox(tab_4, values=["Select account", "Premier", "Strivr", "Bank Of America"])
+Third_party_shipping.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the weight of the package
+Weight = customtkinter.CTkEntry(tab_4,placeholder_text="Weight of packages in lbs", width=180)
+Weight.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the length of the package
+Length = customtkinter.CTkEntry(tab_4,placeholder_text="Length of packages in inches", width=180)
+Length.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the width of the package
+Width = customtkinter.CTkEntry(tab_4,placeholder_text="Width of packages in inches", width=180)
+Width.pack(side='top', pady=10)
+
+# create an open text box for the user to enter the height of the package
+Height = customtkinter.CTkEntry(tab_4,placeholder_text="Height of packages in inches", width=180)
+Height.pack(side='top', pady=10)
+
+# Create a button that calls the convert_csv function for UPS batch file conversion________________________
+Convert_button_UPS = customtkinter.CTkButton(tab_4,
+                                                  text="Convert CSV", command=UPS_convert_button_click,
+                                                 border_width=2, border_color="#FFB500", fg_color="#351C15")
+Convert_button_UPS.pack(side='bottom', pady=20)
 
 
+# custom Tkinter top level window for success message
+def Success_window(message):
+    new_window = customtkinter.CTkToplevel(root)
+    new_window.title("An Eagle never misses")
+    new_window.geometry("500x200")
+    # Make the top-level window stay on top
+    new_window.attributes('-topmost', True)
+    new_window.iconbitmap('assets/Lambda.ico')
+    # Play the notification sound
+    notification.play()
 
+    # Create a label for the success message
+    success_label = customtkinter.CTkLabel(new_window, text= message)
+    success_label.pack(pady=20)
 
+    Create_button = customtkinter.CTkButton(new_window, text="Lets GO!", command=new_window.destroy)
+    Create_button.pack(side = 'bottom', pady=20)
 
+    # destroy the window after 10 seconds
+    new_window.after(10000, new_window.destroy)
 
 
 def main():
@@ -659,4 +693,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # Play the intro sound
+    intro.play()
+    intro.fadeout(15000)
     main()
