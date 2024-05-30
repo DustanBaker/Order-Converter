@@ -536,7 +536,7 @@ def Eagle_WO_button_click():
     try:
         os.makedirs(default_directory, exist_ok=True)
         write_cleaned_csv(output_path, cleaned_data)
-        Success_window("File saved successfully at\n{output_path}")
+        Success_window(f"File saved successfully at\n{output_path}")
 
     except (OSError, IOError):
         # If the default path is unavailable, ask the user for the output directory and base filename
