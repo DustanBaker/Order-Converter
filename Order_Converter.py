@@ -677,7 +677,7 @@ root.geometry("600x650")
 root.iconbitmap('assets/Lambda.ico')
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5,\nNow powered by Pandas and LiberTea!")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.5.1,\nNow powered by Pandas and LiberTea!")
 Header_Label1.pack(pady=5)
 
 # create a tab view with custom tkinter
