@@ -46,8 +46,8 @@ except UnicodeDecodeError:
     uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='ISO-8859-1')
     terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='ISO-8859-1')
 
-# Functinon to define the maximum number of characters in a column
-allowable_lengths = {
+# Define the maximum number of characters in a column for shipment and WO inputs
+allowable_lengths_for_shipments = {
     '4': 70,
     '5': 30,
     '6': 64,
@@ -74,6 +74,26 @@ allowable_lengths = {
     '29': 64,
     '30': 64,
     '31': 64
+}
+
+# Define the maximum allowable lengths for ASN templates inputs
+allowable_lengths_for_ASN = {
+    '1': 20,
+    '2': 64,
+    '3': 20,
+    '4': 64,
+    '5': 64,
+    '6': 20,
+    '9': 64,
+    '10': 64,
+    '11': 64,
+    '12': 64,
+    '13': 64,
+    '14': 64,
+    '15': 64,
+    '16': 64,
+    '17': 64,
+
 }
 
 # Extract the data from column 31
@@ -152,7 +172,7 @@ def write_cleaned_csv(output_file, cleaned_data):
     cleaned_data.to_csv(output_file, index=False)
 
 # Function to check the length of characters in a column
-def check_character_length(df, length_dict, errors):
+def check_character_length_shipment(df, length_dict, errors):
     for column, max_length in length_dict.items():
         if column in df.columns:
             # Check if any cell in the column exceeds the maximum allowable length
@@ -165,6 +185,19 @@ def check_character_length(df, length_dict, errors):
                     errors.append(f"Column '{column}' row {row + 2} exceeds allowable length of {max_length} characters."
                                   f"\nError value: '{value}'")
 
+# Function to check for the length of characters in a column for ASN's
+def check_character_length_ASN(df, length_dict, errors):
+    for column, max_length in length_dict.items():
+        if column in df.columns:
+            # Check if any cell in the column exceeds the maximum allowable length
+            exceeds_length = df[column].astype(str).apply(len) > max_length
+            if exceeds_length.any():
+                # Add an error with the index and value of the cell(s) that exceed the length
+                error_rows = df[exceeds_length].index.tolist()
+                error_values = df.loc[error_rows, column].tolist()
+                for row, value in zip(error_rows, error_values):
+                    errors.append(f"Column '{column}' row {row + 2} exceeds allowable length of {max_length} characters."
+                                  f"\nError value: '{value}'")
 
 def USCG_Error_Handling(input_file):
     # Read the CSV file into a DataFrame, skipping the first row after the header
@@ -218,7 +251,7 @@ def convert_USCG_csv(input_path, output_path, template):
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length(input_data, allowable_lengths, errors)
+    check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, raise a ValueError
     if errors:
@@ -241,7 +274,7 @@ def convert_Terminix_csv(input_path, output_path, template):
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length(input_data, allowable_lengths, errors)
+    check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, raise a ValueError
     if errors:
@@ -280,7 +313,7 @@ def USCG_convert_button_click():
         errors = []
 
         # Check the character length of the columns in the cleaned data
-        check_character_length(input_data, allowable_lengths, errors)
+        check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
 
         # If there are errors, raise a ValueError
         if errors:
@@ -337,7 +370,7 @@ def Terminix_convert_button_click():
         errors = []
 
         # Check the character length of the columns in the cleaned data
-        check_character_length(input_data, allowable_lengths, errors)
+        check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
 
         # If there are errors, raise a ValueError
         if errors:
@@ -396,7 +429,7 @@ def UPS_convert_button_click():
 
 
 
-
+# functinon to filter and save the input file as a shipment
 def Eagle_shipment_button_click():
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
@@ -412,7 +445,7 @@ def Eagle_shipment_button_click():
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length(cleaned_data, allowable_lengths, errors)
+    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, stop execution
     if errors:
@@ -475,7 +508,7 @@ def Eagle_shipment_button_click():
         Success_window(f"File saved successfully at\n{output_base_path}")
 
 
-
+# Function to convert the input file to a Work Order
 def Eagle_WO_button_click():
     # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
@@ -491,7 +524,7 @@ def Eagle_WO_button_click():
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length(cleaned_data, allowable_lengths, errors)
+    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, stop execution
     if errors:
@@ -556,6 +589,87 @@ def Eagle_WO_button_click():
 
 
 
+# Function to filter and save the input file as an ASN
+def Eagle_ASN_button_click():
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    # Clean the input file to remove additional commas
+    cleaned_data = check_and_remove_additional_commas(input_path)
+    write_cleaned_csv(input_path, cleaned_data)
+
+    # Initialize errors list
+    errors = []
+
+    # Check the character length of the columns in the cleaned data
+    check_character_length_ASN(cleaned_data, allowable_lengths_for_shipments, errors)
+
+    # If there are errors, stop execution
+    if errors:
+        messagebox.showerror(title="Character Length Error", message="\n".join(errors))
+        return
+
+    # Read the fourth row, first column to get the project number using pandas
+    project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
+
+
+    # Convert project_number to string and strip any whitespace
+    project_number = str(project_number).strip()
+
+    # Ensure no extra spaces or unexpected characters in column names
+    projects.columns = projects.columns.str.strip()
+
+    # Convert the 'Project Number' column to string and strip any whitespace
+    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+    try:
+        project_name_row = projects[projects['Project Number'] == project_number]
+
+        if not project_name_row.empty:
+            project_name = project_name_row['Project Name'].values[0]
+
+        else:
+            raise IndexError("Project number not found in DataFrame")
+
+    except IndexError:
+        messagebox.showerror(title="Error", message=f"Project Number '{project_number}' not found.")
+        return
+
+    # Create the output file path
+    current_date = datetime.now().strftime("%m-%d-%Y")
+    default_directory = r"T:\3PL Files\ASN Template"
+    default_filename = f"{project_name} ASN {current_date}.csv"
+    output_path = os.path.join(default_directory, default_filename)
+
+    # Save the cleaned CSV file with the appropriate name
+    try:
+        os.makedirs(default_directory, exist_ok=True)
+        write_cleaned_csv(output_path, cleaned_data)
+        Success_window(f"File saved successfully at\n{output_path}")
+
+    except (OSError, IOError):
+        # If the default path is unavailable, ask the user for the output directory and base filename
+        output_base_path = filedialog.asksaveasfilename(
+            title="Save Output File as ASN",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return  # User cancelled the save dialog
+
+        # Save to the selected path
+        write_cleaned_csv(output_base_path, cleaned_data)
+        Success_window(f"File saved successfully at\n{output_base_path}")
+
+
+
+
+
 # GUI_______________________________________________________________________________________________________
 root = customtkinter.CTk()
 root.title("Dusty's Order Converter")
@@ -584,17 +698,23 @@ Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'),
 Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
 Eagle_label.pack(side='top', pady=10)
 
-# Create a button that calls the convert_csv function for Eagle csv filtering and save as a Work Order
+# Create a button that calls the Eagle_WO_button_click function for Eagle csv filtering and save as a Work Order
 Work_order_button_Eagle = customtkinter.CTkButton(tab_1,
                                                   text="Filter and save Work Order", command=Eagle_WO_button_click,
                                                  border_width=2)
 Work_order_button_Eagle.pack(side='bottom', pady=10)
 
-# Create a button that calls the convert_csv function for Eagle csv filtering and save as shipment
+# Create a button that calls the Eagle_shipment_button_click function for Eagle csv filtering and save as shipment
 Shipment_button_Eagle = customtkinter.CTkButton(tab_1,
                                                   text="Filter and save Shipment", command=Eagle_shipment_button_click,
                                                  border_width=2)
 Shipment_button_Eagle.pack(side='bottom', pady=10)
+
+# Create a button that called the Eagle_ASN_button_click function for Eagle csv filtering and save as ASN
+ASN_button_Eagle = customtkinter.CTkButton(tab_1,
+                                                    text="Filter and save ASN", command=Eagle_ASN_button_click,
+                                                     border_width=2)
+ASN_button_Eagle.pack(side='bottom', pady=10)
 
 
 # TAB 2 / USCG_____________________________________________________________________________________________
