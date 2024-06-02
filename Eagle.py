@@ -1,6 +1,7 @@
 # This order converter app imports CSV files with Kit ID's and converts the order to a SKU based CSV upload.
 # Created by Dusty Baker December 2023
 # Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
+#pyinstaller --onefile --noconsole --icon=assets/Eagle.ico --splash=assets/Splash.png Eagle.py
 import csv
 import importlib
 import os
@@ -249,7 +250,7 @@ def USCG_Error_Handling(input_file):
         # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
         if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
             errors.append(
-                f"Error: Incorrect Kit ID found in row {index + 3}")  # Adding 3 to match the original line numbering
+                f" row {index + 3}")  # Adding 3 to match the original line numbering
 
     return errors
 
@@ -270,7 +271,7 @@ def Terminix_error_handling(input_file):
         # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
         if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
             errors.append(
-                f"Error: Incorrect Kit ID found in row {index + 3}")  # Adding 3 to match the original line numbering
+                f"row {index + 3}")  # Adding 3 to match the original line numbering
 
     return errors
 
@@ -337,7 +338,7 @@ def USCG_convert_button_click():
     # Check for correct USCG kit ID
     errors = USCG_Error_Handling(input_path)
     if errors:
-        Error_window("Error",f"Error: {errors}")
+        Error_window("ERROR -> Kit ID",f"There are incorrect Kit ID's in: {errors}")
         return
 
     try:
@@ -395,6 +396,12 @@ def Terminix_convert_button_click():
     if not input_path:
         return  # User cancelled the file dialog
 
+    # Check for correct Terminix kit ID
+    errors = Terminix_error_handling(input_path)
+    if errors:
+        Error_window("ERROR -> Kit ID",f"There are incorrect Kit ID's in: {errors}")
+        return
+
     try:
         # Clean the commas from the input file
         cleaned_data = check_and_remove_additional_commas(input_path)
@@ -412,14 +419,12 @@ def Terminix_convert_button_click():
         # If there are errors, raise a ValueError
         if errors:
             raise ValueError("\n".join(errors))
-
-        # Check for correct Terminix kit ID
-        errors.extend(Terminix_error_handling(input_path))
-        if errors:
-            raise ValueError("\n".join(errors))
     except (OSError, IOError, ValueError) as e:
-        Error_window("Error",f"Error: {e}")
-        return
+        Error_window("Error", f"Error: {e}")
+        return  # Exit the function if there is an error
+
+
+
 
     # Create the default output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
@@ -858,7 +863,7 @@ def Success_window(message):
 def Error_window(title, message):
     new_window = customtkinter.CTkToplevel(root)
     new_window.title(title)
-    new_window.geometry("500x200")
+    new_window.geometry("500x300")  # Increase height to make room for the button
     new_window.iconbitmap('assets/Eagle.ico')  # Set the icon for the error window
     new_window.attributes('-topmost', True)
 
@@ -875,13 +880,17 @@ def Error_window(title, message):
     Eagle_label = customtkinter.CTkLabel(content_frame, text="", image=Eagle_image)
     Eagle_label.pack(side='left', padx=10, pady=10)
 
-    # Create a label for the error message, placed to the right of the image
-    error_label = customtkinter.CTkLabel(content_frame, text=message, wraplength=300)
-    error_label.pack(side='left', padx=10, pady=10, expand=True, fill='both')
+    # Create a scrollable frame for the error message
+    scrollable_frame = customtkinter.CTkScrollableFrame(content_frame, width=300, height=100)  # Reduce height
+    scrollable_frame.pack(side='left', padx=10, pady=10, expand=True, fill='both')
+
+    # Create a label for the error message inside the scrollable frame
+    error_label = customtkinter.CTkLabel(scrollable_frame, text=message, wraplength=280)
+    error_label.pack(padx=10, pady=10, expand=True, fill='both')
 
     # Create a button centered at the bottom
     Create_button = customtkinter.CTkButton(new_window, text="Disappointment", command=new_window.destroy)
-    Create_button.pack(side='bottom', pady=20)
+    Create_button.pack(side='bottom', pady=10)  # Adjust pady to make room
 
     # Play the error sound
     Error.play()
