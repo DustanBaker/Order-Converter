@@ -1,7 +1,7 @@
 Copyright © 2024 Dusty Baker. All rights reserved.
 
-No part of "Dusty's Order Converter" application, including its code, design, text, graphics, and any other related material, may be reproduced, distributed, transmitted, displayed, published, or broadcast without the prior written permission of the copyright holder, except for the user's own personal and non-commercial use.
+No part of "Eagle File Manager" application, including its code, design, text, graphics, and any other related material, may be reproduced, distributed, transmitted, displayed, published, or broadcast without the prior written permission of the copyright holder, except for the user's own personal and non-commercial use.
 
 This application is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
 
-The use of the "Dusty's Order Converter" application signifies your agreement to these terms.
+The use of the "Eagle File Manger" application signifies your agreement to these terms. If you actually read this far then congratulations on being a true friend. Also this Application Comes with a subsctiption fee of 2 "Glizzies" per month per user.
