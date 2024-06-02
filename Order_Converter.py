@@ -658,156 +658,126 @@ def Eagle_ASN_button_click():
 
 
 # GUI_______________________________________________________________________________________________________
-#Custom Tkinter top level window for splash screen
 
-splash_root = customtkinter.CTk()
-splash_root.geometry("800x450")
-# locate the window in the center of the screen
-x_cordinate = int((splash_root.winfo_screenwidth() / 2) - (800 / 2))
-y_cordinate = int((splash_root.winfo_screenheight() / 2) - (450 / 2))
-splash_root.geometry(f"+{x_cordinate}+{y_cordinate}")
-splash_root.overrideredirect(True)
-splash_root.attributes('-topmost', True)
-#import and play the intro sound while splash screen is displayed
+root = customtkinter.CTk()
+root.title("Eagle File Manager")
+root.geometry("600x650")
+root.iconbitmap('assets/Eagle.ico')
 
-intro.play()
-splash_root.after(7100, intro.stop)
+# Create label
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.6")
+Header_Label1.pack(pady=5)
 
-splash_image = customtkinter.CTkImage(light_image=Image.open('assets/splash.png'),
-                                      dark_image=Image.open('assets/splash.png'),
-                                      size=(800, 600))
-splash_label = customtkinter.CTkLabel(splash_root, text="", image=splash_image)
-splash_label.pack()
+# create a tab view with custom tkinter
+My_tab = customtkinter.CTkTabview(root)
+My_tab.pack(expand=1, fill="both")
 
+# create a tab
+tab_1 = My_tab.add("The Eagle")
+tab_2 = My_tab.add("USCG")
+tab_3 = My_tab.add("Terminix")
+tab_4 = My_tab.add("UPS")
 
+# TAB 1 / The EAGLE_________________________________________________________________________________________
+## Background image for tab_1 / Eagle
+Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'),
+                                     dark_image=Image.open('assets/eagle.jpg'),
+                                     size=(400, 400))
 
+Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
+Eagle_label.pack(side='top', pady=10)
 
-def main_window():
-    global root
-    # Close the splash screen
-    splash_root.destroy()
+# Create a button that calls the Eagle_WO_button_click function for Eagle csv filtering and save as a Work Order
+Work_order_button_Eagle = customtkinter.CTkButton(tab_1,
+                                                  text="Filter and save Work Order", command=Eagle_WO_button_click,
+                                                  border_width=2)
+Work_order_button_Eagle.pack(side='bottom', pady=10)
 
-    root = customtkinter.CTk()
-    root.title("Eagle File Manager")
-    root.geometry("600x650")
-    root.iconbitmap('assets/Eagle.ico')
+# Create a button that calls the Eagle_shipment_button_click function for Eagle csv filtering and save as shipment
+Shipment_button_Eagle = customtkinter.CTkButton(tab_1,
+                                                text="Filter and save Shipment",
+                                                command=Eagle_shipment_button_click,
+                                                border_width=2)
+Shipment_button_Eagle.pack(side='bottom', pady=10)
 
-    # Create label
-    Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.6")
-    Header_Label1.pack(pady=5)
+# Create a button that called the Eagle_ASN_button_click function for Eagle csv filtering and save as ASN
+ASN_button_Eagle = customtkinter.CTkButton(tab_1,
+                                           text="Filter and save ASN", command=Eagle_ASN_button_click,
+                                           border_width=2)
+ASN_button_Eagle.pack(side='bottom', pady=10)
 
-    # create a tab view with custom tkinter
-    My_tab = customtkinter.CTkTabview(root)
-    My_tab.pack(expand=1, fill="both")
+# TAB 2 / USCG_____________________________________________________________________________________________
+# background image for tab_2 / USCG
+USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'),
+                                    dark_image=Image.open('assets/background.png'),
+                                    size=(300, 300))
 
-    # create a tab
-    tab_1 = My_tab.add("The Eagle")
-    tab_2 = My_tab.add("USCG")
-    tab_3 = My_tab.add("Terminix")
-    tab_4 = My_tab.add("UPS")
+USCG_label = customtkinter.CTkLabel(tab_2, text="", image=USCG_image)
+USCG_label.pack(side='top', pady=20)
 
-    # TAB 1 / The EAGLE_________________________________________________________________________________________
-    ## Background image for tab_1 / Eagle
-    Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'),
-                                         dark_image=Image.open('assets/eagle.jpg'),
-                                         size=(400, 400))
+# Create a button that calls the convert_csv function for USCG
+convert_button = customtkinter.CTkButton(tab_2,
+                                         text="Convert CSV", command=USCG_convert_button_click,
+                                         border_width=2, border_color="gold")
+convert_button.pack(side='bottom', pady=20)
 
-    Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
-    Eagle_label.pack(side='top', pady=10)
+# TAB 3 / Terminix_________________________________________________________________________________________
+# Background image for tab_3 / Terminix
+terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'),
+                                        dark_image=Image.open('assets/terminix.jpg'),
+                                        size=(450, 200))
 
-    # Create a button that calls the Eagle_WO_button_click function for Eagle csv filtering and save as a Work Order
-    Work_order_button_Eagle = customtkinter.CTkButton(tab_1,
-                                                      text="Filter and save Work Order", command=Eagle_WO_button_click,
-                                                      border_width=2)
-    Work_order_button_Eagle.pack(side='bottom', pady=10)
+terminix_label = customtkinter.CTkLabel(tab_3, text="", image=terminix_image)
+terminix_label.pack(side='top', pady=20)
 
-    # Create a button that calls the Eagle_shipment_button_click function for Eagle csv filtering and save as shipment
-    Shipment_button_Eagle = customtkinter.CTkButton(tab_1,
-                                                    text="Filter and save Shipment",
-                                                    command=Eagle_shipment_button_click,
-                                                    border_width=2)
-    Shipment_button_Eagle.pack(side='bottom', pady=10)
+# Legend for tab_2 / Terminix
+terminix_legend = customtkinter.CTkLabel(tab_3,
+                                         text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
+                                              "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
+terminix_legend.pack(side='top', pady=20)
 
-    # Create a button that called the Eagle_ASN_button_click function for Eagle csv filtering and save as ASN
-    ASN_button_Eagle = customtkinter.CTkButton(tab_1,
-                                               text="Filter and save ASN", command=Eagle_ASN_button_click,
-                                               border_width=2)
-    ASN_button_Eagle.pack(side='bottom', pady=10)
+# Create a button that calls the convert_csv function for Terminix
+Convert_button_terminix = customtkinter.CTkButton(tab_3,
+                                                  text="Convert CSV", command=Terminix_convert_button_click,
+                                                  border_width=2, border_color="Red", fg_color="green")
+Convert_button_terminix.pack(side='bottom', pady=20)
 
-    # TAB 2 / USCG_____________________________________________________________________________________________
-    # background image for tab_2 / USCG
-    USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'),
-                                        dark_image=Image.open('assets/background.png'),
-                                        size=(300, 300))
+# TAB 4 / UPS_____________________________________________________________________________________________
+## Background image for tab_3 / UPS
+UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'),
+                                   dark_image=Image.open('assets/ups.png'),
+                                   size=(300, 175))
 
-    USCG_label = customtkinter.CTkLabel(tab_2, text="", image=USCG_image)
-    USCG_label.pack(side='top', pady=20)
+UPS_label = customtkinter.CTkLabel(tab_4, text="", image=UPS_image)
+UPS_label.pack(side='top', pady=10)
 
-    # Create a button that calls the convert_csv function for USCG
-    convert_button = customtkinter.CTkButton(tab_2,
-                                             text="Convert CSV", command=USCG_convert_button_click,
-                                             border_width=2, border_color="gold")
-    convert_button.pack(side='bottom', pady=20)
+# create a drop down menu for shipping accounts
+Third_party_shipping = customtkinter.CTkComboBox(tab_4,
+                                                 values=["Select account", "Premier", "Strivr", "Bank Of America"])
+Third_party_shipping.pack(side='top', pady=10)
 
-    # TAB 3 / Terminix_________________________________________________________________________________________
-    # Background image for tab_3 / Terminix
-    terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'),
-                                            dark_image=Image.open('assets/terminix.jpg'),
-                                            size=(450, 200))
+# create an open text box for the user to enter the weight of the package
+Weight = customtkinter.CTkEntry(tab_4, placeholder_text="Weight of packages in lbs", width=180)
+Weight.pack(side='top', pady=10)
 
-    terminix_label = customtkinter.CTkLabel(tab_3, text="", image=terminix_image)
-    terminix_label.pack(side='top', pady=20)
+# create an open text box for the user to enter the length of the package
+Length = customtkinter.CTkEntry(tab_4, placeholder_text="Length of packages in inches", width=180)
+Length.pack(side='top', pady=10)
 
-    # Legend for tab_2 / Terminix
-    terminix_legend = customtkinter.CTkLabel(tab_3,
-                                             text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
-                                                  "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
-    terminix_legend.pack(side='top', pady=20)
+# create an open text box for the user to enter the width of the package
+Width = customtkinter.CTkEntry(tab_4, placeholder_text="Width of packages in inches", width=180)
+Width.pack(side='top', pady=10)
 
-    # Create a button that calls the convert_csv function for Terminix
-    Convert_button_terminix = customtkinter.CTkButton(tab_3,
-                                                      text="Convert CSV", command=Terminix_convert_button_click,
-                                                      border_width=2, border_color="Red", fg_color="green")
-    Convert_button_terminix.pack(side='bottom', pady=20)
+# create an open text box for the user to enter the height of the package
+Height = customtkinter.CTkEntry(tab_4, placeholder_text="Height of packages in inches", width=180)
+Height.pack(side='top', pady=10)
 
-    # TAB 4 / UPS_____________________________________________________________________________________________
-    ## Background image for tab_3 / UPS
-    UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'),
-                                       dark_image=Image.open('assets/ups.png'),
-                                       size=(300, 175))
+# Create a button that calls the convert_csv function for UPS batch file conversion________________________
+Convert_button_UPS = customtkinter.CTkButton(tab_4,
+                                             text="Convert CSV", command=UPS_convert_button_click,
+                                             border_width=2, border_color="#FFB500", fg_color="#351C15")
+Convert_button_UPS.pack(side='bottom', pady=20)
 
-    UPS_label = customtkinter.CTkLabel(tab_4, text="", image=UPS_image)
-    UPS_label.pack(side='top', pady=10)
-
-    # create a drop down menu for shipping accounts
-    Third_party_shipping = customtkinter.CTkComboBox(tab_4,
-                                                     values=["Select account", "Premier", "Strivr", "Bank Of America"])
-    Third_party_shipping.pack(side='top', pady=10)
-
-    # create an open text box for the user to enter the weight of the package
-    Weight = customtkinter.CTkEntry(tab_4, placeholder_text="Weight of packages in lbs", width=180)
-    Weight.pack(side='top', pady=10)
-
-    # create an open text box for the user to enter the length of the package
-    Length = customtkinter.CTkEntry(tab_4, placeholder_text="Length of packages in inches", width=180)
-    Length.pack(side='top', pady=10)
-
-    # create an open text box for the user to enter the width of the package
-    Width = customtkinter.CTkEntry(tab_4, placeholder_text="Width of packages in inches", width=180)
-    Width.pack(side='top', pady=10)
-
-    # create an open text box for the user to enter the height of the package
-    Height = customtkinter.CTkEntry(tab_4, placeholder_text="Height of packages in inches", width=180)
-    Height.pack(side='top', pady=10)
-
-    # Create a button that calls the convert_csv function for UPS batch file conversion________________________
-    Convert_button_UPS = customtkinter.CTkButton(tab_4,
-                                                 text="Convert CSV", command=UPS_convert_button_click,
-                                                 border_width=2, border_color="#FFB500", fg_color="#351C15")
-    Convert_button_UPS.pack(side='bottom', pady=20)
-
-
-splash_root.after(7100, main_window)
 
 
 
@@ -865,7 +835,8 @@ def Error_window(message, title):
     new_window.after(10000, new_window.destroy)
 
 
+if __name__ == "__main__":
 
-splash_root.mainloop()
+    root.mainloop()
 
 
