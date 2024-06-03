@@ -77,10 +77,12 @@ else:
 
 # Define the maximum number of characters in a column for shipment and WO inputs
 allowable_lengths_for_shipments = {
+    '1': 3,
+    '2': 30,
     '4': 70,
     '5': 30,
     '6': 64,
-    '7': 64,
+    '7': 32,
     '8': 32,
     '9': 32,
     '10': 32,
