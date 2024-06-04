@@ -909,7 +909,6 @@ def main():
     intro.play()
     #set timer for the intro sound to fade out
     intro.fadeout(15000)
-    Error_window("Welcome to the Eagle File Manager", "This application is designed to help you manage your files.\n")
     root.mainloop()
 
 
