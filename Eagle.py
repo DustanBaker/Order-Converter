@@ -12,15 +12,16 @@ import customtkinter
 import pandas as pd
 from PIL import Image
 import pygame
-import pyi_splash
+import random
+#import pyi_splash
 
-pyi_splash.update_text("PyInstaller is a great software!")
-pyi_splash.update_text("Second time's a charm!")
+#pyi_splash.update_text("PyInstaller is a great software!")
+#pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-pyi_splash.close()
+#pyi_splash.close()
 
 customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -31,7 +32,7 @@ pygame.mixer.init()
 # Load the sound file
 notification = pygame.mixer.Sound('assets/Propaganda.mp3')
 intro = pygame.mixer.Sound('assets/LiberTea.mp3')
-Error = pygame.mixer.Sound('assets/arm.mp3')
+Error = pygame.mixer.Sound('assets/Error.mp3')
 
 # Initialize error_added variable to keep track of whether an error message has been added
 error_added = False
@@ -51,7 +52,9 @@ required_files = [
     'assets/ups_batch.csv',
     'assets/projects.csv',
     'assets/USCG_data.csv',
-    'assets/terminix_data.csv'
+    'assets/terminix_data.csv',
+    'assets/Eagle.ico',
+
 ]
 
 # Check if required files exist
@@ -77,7 +80,6 @@ else:
 
 # Define the maximum number of characters in a column for shipment and WO inputs
 allowable_lengths_for_shipments = {
-    '1': 3,
     '2': 30,
     '4': 70,
     '5': 30,
@@ -709,7 +711,7 @@ root.eval('tk::PlaceWindow . center')
 
 
 # Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.6\n Now with 50% more Eagle!")
+Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.\n ")
 Header_Label1.pack(pady=5)
 
 # create a tab view with custom tkinter
@@ -862,25 +864,31 @@ def Success_window(message):
 
 
 #custom Tkinter top level window for error message
+# Custom Tkinter top level window for error message
 def Error_window(title, message):
     new_window = customtkinter.CTkToplevel(root)
     new_window.title(title)
-    new_window.geometry("500x300")  # Increase height to make room for the button
+    new_window.geometry("600x300")  # Increase height to make room for the button
     new_window.iconbitmap('assets/Eagle.ico')  # Set the icon for the error window
     new_window.attributes('-topmost', True)
 
-    # Show the eagle image
-    Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.ico'),
-                                         dark_image=Image.open('assets/eagle.ico'),
-                                         size=(100, 100))
+    # Select a random image from the "assets/memes" folder
+    memes_folder = 'assets/memes'
+    meme_files = [f for f in os.listdir(memes_folder) if os.path.isfile(os.path.join(memes_folder, f))]
+    random_meme = os.path.join(memes_folder, random.choice(meme_files))
+
+    # Show the random meme image
+    Meme_image = customtkinter.CTkImage(light_image=Image.open(random_meme),
+                                        dark_image=Image.open(random_meme),
+                                        size=(200, 200))
 
     # Create a frame to hold the image and text
     content_frame = customtkinter.CTkFrame(new_window)
     content_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-    # Place the eagle image on the left side
-    Eagle_label = customtkinter.CTkLabel(content_frame, text="", image=Eagle_image)
-    Eagle_label.pack(side='left', padx=10, pady=10)
+    # Place the meme image on the left side
+    Meme_label = customtkinter.CTkLabel(content_frame, text="", image=Meme_image)
+    Meme_label.pack(side='left', padx=10, pady=10)
 
     # Create a scrollable frame for the error message
     scrollable_frame = customtkinter.CTkScrollableFrame(content_frame, width=300, height=100)  # Reduce height
@@ -898,7 +906,12 @@ def Error_window(title, message):
     Error.play()
 
 def main():
+    intro.play()
+    #set timer for the intro sound to fade out
+    intro.fadeout(15000)
+    Error_window("Welcome to the Eagle File Manager", "This application is designed to help you manage your files.\n")
     root.mainloop()
+
 
 
 
