@@ -30,9 +30,9 @@ customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), da
 pygame.mixer.init()
 
 # Load the sound file
-notification = pygame.mixer.Sound('assets/Propaganda.mp3')
-intro = pygame.mixer.Sound('assets/LiberTea.mp3')
-Error = pygame.mixer.Sound('assets/Error.mp3')
+notification = pygame.mixer.Sound('assets/sounds/Propaganda.mp3')
+intro = pygame.mixer.Sound('assets/sounds/LiberTea.mp3')
+Error = pygame.mixer.Sound('assets/sounds/Error.mp3')
 
 # Initialize error_added variable to keep track of whether an error message has been added
 error_added = False
@@ -53,7 +53,7 @@ required_files = [
     'assets/projects.csv',
     'assets/USCG_data.csv',
     'assets/terminix_data.csv',
-    'assets/Eagle.ico',
+    'assets/images/Eagle.ico',
 
 ]
 
@@ -193,6 +193,20 @@ def check_and_remove_additional_commas(input_file):
 
     # Remove additional commas from all string fields
     df = df.map(lambda x: x.replace(',', '') if isinstance(x, str) else x)
+    # Remove additional apostrophes from all string fields
+    df = df.map(lambda x: x.replace("'", '') if isinstance(x, str) else x)
+    # Remove additional double quotes from all string fields
+    df = df.map(lambda x: x.replace('"', '') if isinstance(x, str) else x)
+    # Remove additional semi-colons from all string fields
+    df = df.map(lambda x: x.replace(';', '') if isinstance(x, str) else x)
+    # Remove additional colons from all string fields
+    df = df.map(lambda x: x.replace(':', '') if isinstance(x, str) else x)
+    # Remove additional parentheses from all string fields
+    df = df.map(lambda x: x.replace('(', '') if isinstance(x, str) else x)
+    # Remove additional parentheses from all string fields
+    df = df.map(lambda x: x.replace(')', '') if isinstance(x, str) else x)
+
+
 
     return df
 
@@ -705,7 +719,7 @@ def Eagle_ASN_button_click():
 root = customtkinter.CTk()
 root.title("Eagle File Manager")
 root.geometry("600x650")
-root.iconbitmap('assets/Eagle.ico')
+root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
 root.eval('tk::PlaceWindow . center')
 
@@ -726,8 +740,8 @@ tab_4 = My_tab.add("UPS")
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
 ## Background image for tab_1 / Eagle
-Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.jpg'),
-                                     dark_image=Image.open('assets/eagle.jpg'),
+Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.jpg'),
+                                     dark_image=Image.open('assets/images/eagle.jpg'),
                                      size=(400, 400))
 
 Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
@@ -754,8 +768,8 @@ ASN_button_Eagle.pack(side='bottom', pady=10)
 
 # TAB 2 / USCG_____________________________________________________________________________________________
 # background image for tab_2 / USCG
-USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/background.png'),
-                                    dark_image=Image.open('assets/background.png'),
+USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/images/background.png'),
+                                    dark_image=Image.open('assets/images/background.png'),
                                     size=(300, 300))
 
 USCG_label = customtkinter.CTkLabel(tab_2, text="", image=USCG_image)
@@ -769,8 +783,8 @@ convert_button.pack(side='bottom', pady=20)
 
 # TAB 3 / Terminix_________________________________________________________________________________________
 # Background image for tab_3 / Terminix
-terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/terminix.jpg'),
-                                        dark_image=Image.open('assets/terminix.jpg'),
+terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/images/terminix.jpg'),
+                                        dark_image=Image.open('assets/images/terminix.jpg'),
                                         size=(450, 200))
 
 terminix_label = customtkinter.CTkLabel(tab_3, text="", image=terminix_image)
@@ -790,8 +804,8 @@ Convert_button_terminix.pack(side='bottom', pady=20)
 
 # TAB 4 / UPS_____________________________________________________________________________________________
 ## Background image for tab_3 / UPS
-UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/ups.png'),
-                                   dark_image=Image.open('assets/ups.png'),
+UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/images/ups.png'),
+                                   dark_image=Image.open('assets/images/ups.png'),
                                    size=(300, 175))
 
 UPS_label = customtkinter.CTkLabel(tab_4, text="", image=UPS_image)
@@ -833,11 +847,11 @@ def Success_window(message):
     new_window.title("An Eagle never misses")
     new_window.geometry("500x200")
     new_window.attributes('-topmost', True)
-    new_window.iconbitmap('assets/Eagle.ico')
+    new_window.iconbitmap('assets/images/Eagle.ico')
 
     # Show the eagle image
-    Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/eagle.ico'),
-                                         dark_image=Image.open('assets/eagle.ico'),
+    Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.ico'),
+                                         dark_image=Image.open('assets/images/eagle.ico'),
                                          size=(100, 100))
 
     # Create a frame to hold the image and text
@@ -869,7 +883,7 @@ def Error_window(title, message):
     new_window = customtkinter.CTkToplevel(root)
     new_window.title(title)
     new_window.geometry("600x300")  # Increase height to make room for the button
-    new_window.iconbitmap('assets/Eagle.ico')  # Set the icon for the error window
+    new_window.iconbitmap('assets/images/Eagle.ico')  # Set the icon for the error window
     new_window.attributes('-topmost', True)
 
     # Select a random image from the "assets/memes" folder
