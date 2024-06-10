@@ -6,13 +6,16 @@ import csv
 import importlib
 import os
 from datetime import datetime
-from tkinter import filedialog
-from tkinter import messagebox
+import tkinter as tk
+from tkinter import *
+from tkinter import filedialog, messagebox
 import customtkinter
 import pandas as pd
 from PIL import Image
 import pygame
 import random
+import webbrowser
+import shutil
 #import pyi_splash
 
 #pyi_splash.update_text("PyInstaller is a great software!")
@@ -23,7 +26,7 @@ import random
     # this function is called or the Python program is terminated.
 #pyi_splash.close()
 
-customtkinter.set_appearance_mode("system")  # Modes: system (default), light, dark
+customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
 # Initialize pygame
@@ -49,10 +52,10 @@ def check_files_exist(file_paths):
 
 # List of required files
 required_files = [
-    'assets/ups_batch.csv',
-    'assets/projects.csv',
-    'assets/USCG_data.csv',
-    'assets/terminix_data.csv',
+    'assets/Templates/ups_batch.csv',
+    'assets/Templates/projects.csv',
+    'assets/Templates/USCG_data.csv',
+    'assets/Templates/terminix_data.csv',
     'assets/images/Eagle.ico',
 
 ]
@@ -61,17 +64,17 @@ required_files = [
 if check_files_exist(required_files):
     # Try reading the CSV files with 'latin1' encoding first, then try 'ISO-8859-1' if it fails
     try:
-        ups_batch = pd.read_csv('assets/ups_batch.csv', encoding='latin1')
-        projects = pd.read_csv('assets/projects.csv', encoding='latin1')
-        uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='latin1')
-        terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='latin1')
+        ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='latin1')
+        projects = pd.read_csv('assets/Templates/projects.csv', encoding='latin1')
+        uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='latin1')
+        terminix_template = pd.read_csv('assets/Templates/terminix_data.csv', encoding='latin1')
     except UnicodeDecodeError:
         messagebox.showerror("Encoding Error", "Error reading the file with 'latin1' encoding. Trying 'ISO-8859-1'...")
         try:
-            ups_batch = pd.read_csv('assets/ups_batch.csv', encoding='ISO-8859-1')
-            projects = pd.read_csv('assets/projects.csv', encoding='ISO-8859-1')
-            uscg_template = pd.read_csv('assets/USCG_data.csv', encoding='ISO-8859-1')
-            terminix_template = pd.read_csv('assets/terminix_data.csv', encoding='ISO-8859-1')
+            ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='ISO-8859-1')
+            projects = pd.read_csv('assets/Templates/projects.csv', encoding='ISO-8859-1')
+            uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='ISO-8859-1')
+            terminix_template = pd.read_csv('assets/Templates/terminix_data.csv', encoding='ISO-8859-1')
         except Exception as e:
             messagebox.showerror("File Error", f"An error occurred while reading the files: {e}")
 else:
@@ -713,6 +716,80 @@ def Eagle_ASN_button_click():
         write_cleaned_csv(output_base_path, cleaned_data)
         Success_window(f"File saved successfully at\n{output_base_path}")
 
+# Open the assets folder and allow the user to open a .csv file from "assets/Templates"
+def modify_template():
+    Caution_window("CAUTION", "Please make sure to save the file in the same format, name and location as the original template.\n"
+                              "Any changes made to the file may affect the functionality of the application.")
+    file_path = filedialog.askopenfilename(title="Select a Template File", initialdir="assets/Templates",
+                                           filetypes=[("CSV Files", "*.csv")])
+    if file_path:
+        try:
+            os.system(f'start excel "{file_path}"')
+        except (OSError, IOError) as e:
+            Error_window("Error", f"Error: {e}")
+
+
+
+
+# Open file dialog to allow user to select a file to add as a meme
+def Add_meme():
+    file_path = filedialog.askopenfilename(title="Select a Dank Meme you would like to add",
+                                           filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
+    # save the image to the assets/memes folder
+    if file_path:
+        file_name = os.path.basename(file_path)
+        output_path = os.path.join("assets/memes", file_name)
+        try:
+            os.makedirs("assets/memes", exist_ok=True)
+            shutil.copy(file_path, output_path)
+            Success_window(f"File saved successfully at\n{output_path}")
+        except (OSError, IOError) as e:
+            Error_window("Error", f"Error: {e}")
+
+
+
+
+def theme_selection(theme):
+    if theme == 0:
+        customtkinter.set_appearance_mode("light")
+        update_menu_colors()
+    else :
+        customtkinter.set_appearance_mode("dark")
+        update_menu_colors()
+
+
+def help_us():
+    # Open the email client with new email
+    email_address = "dbaker@premierss.com"
+    subject = "Eagle File Manager Help Request"
+    body = "The user has requested help with the Eagle File Manager. Please provide assistance."
+    webbrowser.open(f"mailto:{email_address}?subject={subject}&body={body}")
+
+
+
+
+
+    pass
+
+
+def update_menu_colors():
+    appearance_mode = customtkinter.get_appearance_mode()
+    if appearance_mode == "Dark":
+        fg_color = "#333333"
+        fg_text = "#ffffff"
+    else:
+        fg_color = "#f0f0f0"
+        fg_text = "#000000"
+
+    menu_frame.configure(fg_color=fg_color)
+    for widget in menu_frame.winfo_children():
+        if isinstance(widget, customtkinter.CTkButton):
+            widget.configure(fg_color=fg_color, text_color=fg_text)
+
+def show_submenu(menu, button):
+    menu.tk_popup(button.winfo_rootx(), button.winfo_rooty() + button.winfo_height())
+
+
 
 # GUI_______________________________________________________________________________________________________
 
@@ -723,14 +800,40 @@ root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
 root.eval('tk::PlaceWindow . center')
 
+# Assuming image_path is defined
+image_path = "assets/images/Eagle.ico"
 
-# Create label
-Header_Label1 = customtkinter.CTkLabel(root, text="Version 1.\n ")
-Header_Label1.pack(pady=5)
 
-# create a tab view with custom tkinter
+# Create a custom frame to act as the menu bar that is only tall enough to hold the buttons
+menu_frame = customtkinter.CTkFrame(root,height=10, fg_color="transparent")
+menu_frame.pack(side="top", fill="x",)
+
+def create_menu_button(text, menu):
+    button = customtkinter.CTkButton(menu_frame, text=text, command=lambda: show_submenu(menu, button), corner_radius=0, fg_color="transparent", text_color="#FFFFFF")
+    button.pack(side="left")
+    return button
+
+file_menu = tk.Menu(menu_frame, tearoff=0)
+file_menu.add_command(label="Modify Template", command=modify_template)
+file_menu.add_command(label="Add Meme", command=Add_meme)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.quit)
+
+
+setting_menu = tk.Menu(menu_frame, tearoff=0)
+setting_menu.add_command(label="Light theme", command=lambda: theme_selection(0))
+setting_menu.add_command(label="Dark theme", command=lambda: theme_selection(1))
+
+
+file_button = create_menu_button("File", file_menu)
+setting_button = create_menu_button("Setting", setting_menu)
+help_button = customtkinter.CTkButton(menu_frame, text="Help", command=help_us, corner_radius=0, fg_color="transparent", text_color="#FFFFFF")
+help_button.pack(side="left")
+
+
+# create a tab view with custom tkinter that fills root window
 My_tab = customtkinter.CTkTabview(root)
-My_tab.pack(expand=1, fill="both")
+My_tab.pack(fill="both", expand=True, side="top")
 
 # create a tab
 tab_1 = My_tab.add("The Eagle")
@@ -885,6 +988,8 @@ def Error_window(title, message):
     new_window.geometry("600x300")  # Increase height to make room for the button
     new_window.iconbitmap('assets/images/Eagle.ico')  # Set the icon for the error window
     new_window.attributes('-topmost', True)
+    #locate the window in the center of the screen
+    new_window.eval('tk::PlaceWindow . center')
 
     # Select a random image from the "assets/memes" folder
     memes_folder = 'assets/memes'
@@ -919,10 +1024,43 @@ def Error_window(title, message):
     # Play the error sound
     Error.play()
 
+def Caution_window(title, message):
+    new_window = customtkinter.CTkToplevel()
+    new_window.title(title)
+    new_window.geometry("500x200")
+    new_window.attributes('-topmost', True)
+    new_window.iconbitmap('assets/images/Eagle.ico')
+
+    # Show the eagle image
+    Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.ico'),
+                                         dark_image=Image.open('assets/images/eagle.ico'),
+                                         size=(100, 100))
+
+    # Create a frame to hold the image and text
+    content_frame = customtkinter.CTkFrame(new_window)
+    content_frame.pack(expand=True, fill='both', padx=10, pady=10)
+
+    # Place the eagle image on the left side
+    Eagle_label = customtkinter.CTkLabel(content_frame, text="", image=Eagle_image)
+    Eagle_label.pack(side='left', padx=10, pady=10)
+
+    # Create a label for the success message, placed to the right of the image
+    success_label = customtkinter.CTkLabel(content_frame, text=message, wraplength=300)
+    success_label.pack(side='left', padx=10, pady=10, expand=True, fill='both')
+
+    # Create a button centered at the bottom
+    Create_button = customtkinter.CTkButton(new_window, text="I 100% understand", command=new_window.destroy)
+    Create_button.pack(side='bottom', pady=20)
+
+    # Play the notification sound
+    notification.play()
+
+
 def main():
     intro.play()
     #set timer for the intro sound to fade out
-    intro.fadeout(15000)
+    #ntro.fadeout(15000)
+
     root.mainloop()
 
 
