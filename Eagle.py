@@ -1,7 +1,7 @@
 # This order converter app imports CSV files with Kit ID's and converts the order to a SKU based CSV upload.
 # Created by Dusty Baker December 2023
 # Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
-#pyinstaller --onefile --noconsole --icon=assets/Eagle.ico --splash=assets/Splash.png Eagle.py
+#pyinstaller --onefile --noconsole --icon=assets/images/Eagle.ico --splash=assets/images/Splash.png Eagle.py
 import csv
 import importlib
 import os
@@ -16,15 +16,15 @@ import pygame
 import random
 import webbrowser
 import shutil
-#import pyi_splash
+import pyi_splash
 
-#pyi_splash.update_text("PyInstaller is a great software!")
-#pyi_splash.update_text("Second time's a charm!")
+pyi_splash.update_text("PyInstaller is a great software!")
+pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-#pyi_splash.close()
+pyi_splash.close()
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -854,8 +854,8 @@ tab_4 = My_tab.add("UPS")
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
 ## Background image for tab_1 / Eagle
-Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.jpg'),
-                                     dark_image=Image.open('assets/images/eagle.jpg'),
+Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/Golden_Eagle.png'),
+                                     dark_image=Image.open('assets/images/Golden_Eagle.png'),
                                      size=(400, 400))
 
 Eagle_label = customtkinter.CTkLabel(tab_1, text="", image=Eagle_image)
@@ -864,20 +864,20 @@ Eagle_label.pack(side='top', pady=10)
 # Create a button that calls the Eagle_WO_button_click function for Eagle csv filtering and save as a Work Order
 Work_order_button_Eagle = customtkinter.CTkButton(tab_1,
                                                   text="Filter and save Work Order", command=Eagle_WO_button_click,
-                                                  border_width=2)
+                                                  border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
 Work_order_button_Eagle.pack(side='bottom', pady=10)
 
 # Create a button that calls the Eagle_shipment_button_click function for Eagle csv filtering and save as shipment
 Shipment_button_Eagle = customtkinter.CTkButton(tab_1,
                                                 text="Filter and save Shipment",
                                                 command=Eagle_shipment_button_click,
-                                                border_width=2)
+                                                border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
 Shipment_button_Eagle.pack(side='bottom', pady=10)
 
 # Create a button that called the Eagle_ASN_button_click function for Eagle csv filtering and save as ASN
 ASN_button_Eagle = customtkinter.CTkButton(tab_1,
                                            text="Filter and save ASN", command=Eagle_ASN_button_click,
-                                           border_width=2)
+                                           border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
 ASN_button_Eagle.pack(side='bottom', pady=10)
 
 # TAB 2 / USCG_____________________________________________________________________________________________
@@ -1078,10 +1078,6 @@ def main():
     intro.play()
     #set timer for the intro sound to fade out
     intro.fadeout(15000)
-
-
-
-
     root.mainloop()
 
 

@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Eagle File Manager"
-#define MyAppVersion "1.6"
-#define MyAppPublisher "Lambda labs"
+#define MyAppVersion "1.7"
+#define MyAppPublisher "Baker Studios"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Eagle.exe"
 
@@ -25,8 +25,8 @@ LicenseFile=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter
-OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.6_SETUP
-SetupIconFile=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\assets\Eagle.ico
+OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.7_SETUP
+SetupIconFile=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\assets\images\Eagle.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
