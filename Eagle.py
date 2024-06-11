@@ -789,16 +789,27 @@ def update_menu_colors():
 def show_submenu(menu, button):
     menu.tk_popup(button.winfo_rootx(), button.winfo_rooty() + button.winfo_height())
 
+# Function to center the window
+def center_window(window, width, height):
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = int((screen_width / 2) - (width / 2))
+    y = int((screen_height / 2) - (height / 2))
+    window.geometry(f'{width}x{height}+{x}+{y}')
+
+
 
 
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager")
+root.title("Eagle File Manager 1.7")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
-root.eval('tk::PlaceWindow . center')
+window_width = 600
+window_height = 650
+center_window(root, window_width, window_height)
 
 # Assuming image_path is defined
 image_path = "assets/images/Eagle.ico"
@@ -946,11 +957,16 @@ Convert_button_UPS.pack(side='bottom', pady=20)
 
 # custom Tkinter top level window for success message
 def Success_window(message):
-    new_window = customtkinter.CTkToplevel()
-    new_window.title("An Eagle never misses")
-    new_window.geometry("500x200")
-    new_window.attributes('-topmost', True)
-    new_window.iconbitmap('assets/images/Eagle.ico')
+    s_window = customtkinter.CTkToplevel()
+    s_window.title("An Eagle never misses")
+    s_window.geometry("500x200")
+    s_window.attributes('-topmost', True)
+    s_window.iconbitmap('assets/images/Eagle.ico')
+
+    #locate the window in the center of the screen
+    window_width = 500
+    window_height = 200
+    center_window(s_window, window_width, window_height)
 
     # Show the eagle image
     Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.ico'),
@@ -958,7 +974,7 @@ def Success_window(message):
                                          size=(100, 100))
 
     # Create a frame to hold the image and text
-    content_frame = customtkinter.CTkFrame(new_window)
+    content_frame = customtkinter.CTkFrame(s_window)
     content_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
     # Place the eagle image on the left side
@@ -970,26 +986,25 @@ def Success_window(message):
     success_label.pack(side='left', padx=10, pady=10, expand=True, fill='both')
 
     # Create a button centered at the bottom
-    Create_button = customtkinter.CTkButton(new_window, text="Lets GO!", command=new_window.destroy)
+    Create_button = customtkinter.CTkButton(s_window, text="Lets GO!", command=s_window.destroy)
     Create_button.pack(side='bottom', pady=20)
 
     # Play the notification sound
     notification.play()
 
-    # Destroy the window after 10 seconds
-    new_window.after(10000, new_window.destroy)
-
 
 #custom Tkinter top level window for error message
 # Custom Tkinter top level window for error message
 def Error_window(title, message):
-    new_window = customtkinter.CTkToplevel(root)
-    new_window.title(title)
-    new_window.geometry("600x300")  # Increase height to make room for the button
-    new_window.iconbitmap('assets/images/Eagle.ico')  # Set the icon for the error window
-    new_window.attributes('-topmost', True)
+    e_window = customtkinter.CTkToplevel(root)
+    e_window.title(title)
+    e_window.geometry("600x300")  # Increase height to make room for the button
+    e_window.iconbitmap('assets/images/Eagle.ico')  # Set the icon for the error window
+    e_window.attributes('-topmost', True)
     #locate the window in the center of the screen
-    new_window.eval('tk::PlaceWindow . center')
+    window_width = 600
+    window_height = 300
+    center_window(e_window, window_width, window_height)
 
     # Select a random image from the "assets/memes" folder
     memes_folder = 'assets/memes'
@@ -1002,7 +1017,7 @@ def Error_window(title, message):
                                         size=(200, 200))
 
     # Create a frame to hold the image and text
-    content_frame = customtkinter.CTkFrame(new_window)
+    content_frame = customtkinter.CTkFrame(e_window)
     content_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
     # Place the meme image on the left side
@@ -1018,18 +1033,21 @@ def Error_window(title, message):
     error_label.pack(padx=10, pady=10, expand=True, fill='both')
 
     # Create a button centered at the bottom
-    Create_button = customtkinter.CTkButton(new_window, text="Disappointment", command=new_window.destroy)
+    Create_button = customtkinter.CTkButton(e_window, text="Disappointment", command=e_window.destroy)
     Create_button.pack(side='bottom', pady=10)  # Adjust pady to make room
 
     # Play the error sound
     Error.play()
 
 def Caution_window(title, message):
-    new_window = customtkinter.CTkToplevel()
-    new_window.title(title)
-    new_window.geometry("500x200")
-    new_window.attributes('-topmost', True)
-    new_window.iconbitmap('assets/images/Eagle.ico')
+    c_window = customtkinter.CTkToplevel()
+    c_window.title(title)
+    c_window.geometry("500x200")
+    c_window.attributes('-topmost', True)
+    c_window.iconbitmap('assets/images/Eagle.ico')
+    window_width = 500
+    window_height = 200
+    center_window(c_window, window_width, window_height)
 
     # Show the eagle image
     Eagle_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.ico'),
@@ -1037,7 +1055,7 @@ def Caution_window(title, message):
                                          size=(100, 100))
 
     # Create a frame to hold the image and text
-    content_frame = customtkinter.CTkFrame(new_window)
+    content_frame = customtkinter.CTkFrame(c_window)
     content_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
     # Place the eagle image on the left side
@@ -1049,7 +1067,7 @@ def Caution_window(title, message):
     success_label.pack(side='left', padx=10, pady=10, expand=True, fill='both')
 
     # Create a button centered at the bottom
-    Create_button = customtkinter.CTkButton(new_window, text="I 100% understand", command=new_window.destroy)
+    Create_button = customtkinter.CTkButton(c_window, text="I 100% understand", command=c_window.destroy)
     Create_button.pack(side='bottom', pady=20)
 
     # Play the notification sound
@@ -1059,9 +1077,13 @@ def Caution_window(title, message):
 def main():
     intro.play()
     #set timer for the intro sound to fade out
-    #ntro.fadeout(15000)
+    intro.fadeout(15000)
+
+
+
 
     root.mainloop()
+
 
 
 
