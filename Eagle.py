@@ -11,20 +11,21 @@ from tkinter import *
 from tkinter import filedialog, messagebox
 import customtkinter
 import pandas as pd
+import chardet
 from PIL import Image
 import pygame
 import random
 import webbrowser
 import shutil
-import pyi_splash
+#import pyi_splash
 
-pyi_splash.update_text("PyInstaller is a great software!")
-pyi_splash.update_text("Second time's a charm!")
+#pyi_splash.update_text("PyInstaller is a great software!")
+#pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-pyi_splash.close()
+#pyi_splash.close()
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -80,6 +81,21 @@ if check_files_exist(required_files):
 else:
     # Exit the application if files are missing
     exit()
+
+def read_file(file_path):
+    if file_path.endswith('.csv'):
+        # Detect encoding for CSV
+        with open(file_path, 'rb') as f:
+            result = chardet.detect(f.read())
+        encoding = result['encoding']
+        df = pd.read_csv(file_path, encoding=encoding)
+    else:
+        raise ValueError("Unsupported file format")
+    return df
+
+def save_as_utf8(df, output_path):
+    df.to_csv(output_path, encoding='utf-8', index=False)
+
 
 # Define the maximum number of characters in a column for shipment and WO inputs
 allowable_lengths_for_shipments = {
@@ -190,28 +206,29 @@ def manipulate_terminix_data_using_template(input_data, template):
 
 
 # create a function that reads a CSV file into a dictionary and removes additional commas
-def check_and_remove_additional_commas(input_file):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(input_file)
+def check_and_remove_additional_commas(df):
+    replacements = {
+        ',': '',
+        "'": '',
+        '"': '',
+        ';': '',
+        ':': '',
+        r'\(': '',
+        r'\)': '',
+        r'\[': '',
+        r'\]': '',
+        r'\{': '',
+        r'\}': '',
+        r'\?': '',
+        r'\!': '',
+    }
 
-    # Remove additional commas from all string fields
-    df = df.map(lambda x: x.replace(',', '') if isinstance(x, str) else x)
-    # Remove additional apostrophes from all string fields
-    df = df.map(lambda x: x.replace("'", '') if isinstance(x, str) else x)
-    # Remove additional double quotes from all string fields
-    df = df.map(lambda x: x.replace('"', '') if isinstance(x, str) else x)
-    # Remove additional semi-colons from all string fields
-    df = df.map(lambda x: x.replace(';', '') if isinstance(x, str) else x)
-    # Remove additional colons from all string fields
-    df = df.map(lambda x: x.replace(':', '') if isinstance(x, str) else x)
-    # Remove additional parentheses from all string fields
-    df = df.map(lambda x: x.replace('(', '') if isinstance(x, str) else x)
-    # Remove additional parentheses from all string fields
-    df = df.map(lambda x: x.replace(')', '') if isinstance(x, str) else x)
-
-
+    # Apply the replacements only to string columns
+    for col in df.select_dtypes(include=[object]).columns:
+        df[col] = df[col].replace(replacements, regex=True)
 
     return df
+
 
 
 # create a function that writes a cleaned CSV file
@@ -299,12 +316,12 @@ def Terminix_error_handling(input_file):
 
 # Function to convert USCG CSV using pandas and the template
 def convert_USCG_csv(input_path, output_path, template):
-    # Clean the commas from the input file
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
+    # Read the file (CSV or Excel) into the pandas DataFrame
+    input_data = read_file(input_path)
 
-    # Read the CSV file into the pandas DataFrame
-    input_data = pd.read_csv(input_path)
+    # Clean the commas from the input data
+    cleaned_data = check_and_remove_additional_commas(input_data)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Initialize errors list
     errors = []
@@ -319,38 +336,37 @@ def convert_USCG_csv(input_path, output_path, template):
     # Manipulate the data using the template
     manipulated_data = manipulate_uscg_data_using_template(input_data, template)
 
-    # Write the manipulated data to a new CSV file
-    manipulated_data.to_csv(output_path, index=False)
+    # Write the manipulated data to a new CSV file with UTF-8 encoding
+    save_as_utf8(manipulated_data, output_path)
 
 
 def convert_Terminix_csv(input_path, output_path, template):
-    # Clean the commas from the input file
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
+    # Read the file (CSV) into the pandas DataFrame
+    input_data = read_file(input_path)
 
-    # Read the CSV file into the pandas DataFrame
-    input_data = pd.read_csv(input_path)
+    # Clean the commas from the input data
+    cleaned_data = check_and_remove_additional_commas(input_data)
+    write_cleaned_csv(input_path, cleaned_data)
 
     # Initialize errors list
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
+    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, raise a ValueError
     if errors:
         raise ValueError("\n".join(errors))
 
-    # Manipulate the data using the template
-    manipulated_data = manipulate_terminix_data_using_template(input_data, template)
+    # Manipulate the data using the template (assuming this function exists and is implemented)
+    manipulated_data = manipulate_terminix_data_using_template(cleaned_data, template)
 
-    # Write the manipulated data to a new CSV file
-    manipulated_data.to_csv(output_path, index=False)
+    # Write the manipulated data to a new CSV file with UTF-8 encoding
+    save_as_utf8(manipulated_data, output_path)
 
 
 # Create a function that creates a tkinter button that calls the convert_csv function for USCG
 def USCG_convert_button_click():
-    global error_added
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
     if not input_path:
@@ -359,28 +375,27 @@ def USCG_convert_button_click():
     # Check for correct USCG kit ID
     errors = USCG_Error_Handling(input_path)
     if errors:
-        Error_window("ERROR -> Kit ID",f"There are incorrect Kit ID's in: {errors}")
+        Error_window("ERROR -> Kit ID", f"There are incorrect Kit ID's in: {errors}")
         return
 
     try:
-        # Clean the commas from the input file
-        cleaned_data = check_and_remove_additional_commas(input_path)
-        write_cleaned_csv(input_path, cleaned_data)
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
 
-        # Read the cleaned data into a DataFrame
-        input_data = pd.read_csv(input_path)
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
 
         # Initialize errors list
         errors = []
 
         # Check the character length of the columns in the cleaned data
-        check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
+        check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
         # If there are errors, raise a ValueError
         if errors:
             raise ValueError("\n".join(errors))
     except (OSError, IOError, ValueError) as e:
-        Error_window( "Error",f"Error: {e}")
+        Error_window("Error", f"Error: {e}")
         return
 
     # Create the default output file path
@@ -407,7 +422,8 @@ def USCG_convert_button_click():
         convert_USCG_csv(input_path, output_base_path, uscg_template)
         Success_window(f"File saved successfully at\n{output_base_path}")
     except (OSError, IOError, ValueError) as e:
-        Error_window("Error", f"Error: {e}" )
+        Error_window("Error", f"Error: {e}")
+
 
 
 def Terminix_convert_button_click():
@@ -417,25 +433,19 @@ def Terminix_convert_button_click():
     if not input_path:
         return  # User cancelled the file dialog
 
-    # Check for correct Terminix kit ID
-    errors = Terminix_error_handling(input_path)
-    if errors:
-        Error_window("ERROR -> Kit ID",f"There are incorrect Kit ID's in: {errors}")
-        return
-
     try:
-        # Clean the commas from the input file
-        cleaned_data = check_and_remove_additional_commas(input_path)
-        write_cleaned_csv(input_path, cleaned_data)
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
 
-        # Read the cleaned data into a DataFrame
-        input_data = pd.read_csv(input_path)
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
 
         # Initialize errors list
         errors = []
 
         # Check the character length of the columns in the cleaned data
-        check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
+        check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
         # If there are errors, raise a ValueError
         if errors:
@@ -443,9 +453,6 @@ def Terminix_convert_button_click():
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
         return  # Exit the function if there is an error
-
-
-
 
     # Create the default output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
@@ -474,6 +481,7 @@ def Terminix_convert_button_click():
         Error_window("Error", f"Error: {e}")
 
 
+
 # Create a functin that converts the input file to UPS format
 def UPS_convert_button_click():
     global error_added  # Declare error_added as a global variable
@@ -488,67 +496,58 @@ def UPS_convert_button_click():
 
 # functinon to filter and save the input file as a shipment
 def Eagle_shipment_button_click():
-    # Get the input file path
     input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
 
     if not input_path:
         return  # User cancelled the file dialog
 
-    # Clean the input file to remove additional commas
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
+    try:
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
 
-    # Initialize errors list
-    errors = []
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
 
-    # Check the character length of the columns in the cleaned data
-    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
+        # Initialize errors list
+        errors = []
 
-    # If there are errors, stop execution
-    if errors:
-        Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
+        # Check the character length of the columns in the cleaned data
+        check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
+
+        # If there are errors, stop execution
+        if errors:
+            Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
+            return
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
         return
 
-    # Read the third row, first column to get the project number using pandas
     project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
-
-    # Convert project_number to string and strip any whitespace
     project_number = str(project_number).strip()
-
-    # Ensure no extra spaces or unexpected characters in column names
     projects.columns = projects.columns.str.strip()
-
-    # Convert the 'Project Number' column to string and strip any whitespace
     projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
 
-    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
     try:
         project_name_row = projects[projects['Project Number'] == project_number]
-
         if not project_name_row.empty:
             project_name = project_name_row['Project Name'].values[0]
-
         else:
             raise IndexError("Project number not found in DataFrame")
-
     except IndexError:
         Error_window("Project error", f"Project Number '{project_number}' not found.")
         return
 
-    # Create the output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
     default_directory = r"T:\3PL Files\Shipment Template"
     default_filename = f"{project_name} Shipment {current_date}.csv"
     output_path = os.path.join(default_directory, default_filename)
 
-    # Save the cleaned CSV file with the appropriate name
     try:
         os.makedirs(default_directory, exist_ok=True)
         write_cleaned_csv(output_path, cleaned_data)
         Success_window(f"File saved successfully at \n{output_path}")
-
     except (OSError, IOError):
-        # If the default path is unavailable, ask the user for the output directory and base filename
         output_base_path = filedialog.asksaveasfilename(
             title="Save Output File as Shipment",
             defaultextension=".csv",
@@ -556,11 +555,10 @@ def Eagle_shipment_button_click():
             initialfile=default_filename
         )
         if not output_base_path:
-            return  # User cancelled the save dialog
-
-        # Save to the selected path
+            return
         write_cleaned_csv(output_base_path, cleaned_data)
         Success_window(f"File saved successfully at\n{output_base_path}")
+
 
 
 # Function to convert the input file to a Work Order
@@ -571,73 +569,81 @@ def Eagle_WO_button_click():
     if not input_path:
         return  # User cancelled the file dialog
 
-    # Clean the input file to remove additional commas
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
-
-    # Initialize errors list
-    errors = []
-
-    # Check the character length of the columns in the cleaned data
-    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
-
-    # If there are errors, stop execution
-    if errors:
-        Error_window("Character Length Error", f"Too many Characters \n,".join(errors))
-        return
-
-    # Read the third row, first column to get the project number using pandas
-    project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
-
-    # Convert project_number to string and strip any whitespace
-    project_number = str(project_number).strip()
-
-    # Ensure no extra spaces or unexpected characters in column names
-    projects.columns = projects.columns.str.strip()
-
-    # Convert the 'Project Number' column to string and strip any whitespace
-    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
-
-    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
     try:
-        project_name_row = projects[projects['Project Number'] == project_number]
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
 
-        if not project_name_row.empty:
-            project_name = project_name_row['Project Name'].values[0]
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
 
-        else:
-            raise IndexError("Project number not found in DataFrame")
+        # Initialize errors list
+        errors = []
 
-    except IndexError:
-        Error_window("Project Error",f"Project Number '{project_number}' not found.")
-        return
+        # Check the character length of the columns in the cleaned data
+        check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
-    # Create the output file path
-    current_date = datetime.now().strftime("%m-%d-%Y")
-    default_directory = r"T:\3PL Files\Shipment Template"
-    default_filename = f"{project_name} Work Order {current_date}.csv"
-    output_path = os.path.join(default_directory, default_filename)
+        # If there are errors, stop execution
+        if errors:
+            Error_window("Character Length Error", f"Too many Characters \n,".join(errors))
+            return
 
-    # Save the cleaned CSV file with the appropriate name
-    try:
-        os.makedirs(default_directory, exist_ok=True)
-        write_cleaned_csv(output_path, cleaned_data)
-        Success_window(f"File saved successfully at\n{output_path}")
+        # Read the third row, first column to get the project number using pandas
+        project_number = pd.read_csv(input_path, header=None, nrows=3).iloc[2, 0]
 
-    except (OSError, IOError):
-        # If the default path is unavailable, ask the user for the output directory and base filename
-        output_base_path = filedialog.asksaveasfilename(
-            title="Save Output File as Work Order",
-            defaultextension=".csv",
-            filetypes=[("CSV Files", "*.csv")],
-            initialfile=default_filename
-        )
-        if not output_base_path:
-            return  # User cancelled the save dialog
+        # Convert project_number to string and strip any whitespace
+        project_number = str(project_number).strip()
 
-        # Save to the selected path
-        write_cleaned_csv(output_base_path, cleaned_data)
-        Success_window(f"File saved successfully at\n{output_base_path}")
+        # Ensure no extra spaces or unexpected characters in column names
+        projects.columns = projects.columns.str.strip()
+
+        # Convert the 'Project Number' column to string and strip any whitespace
+        projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+        # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+        try:
+            project_name_row = projects[projects['Project Number'] == project_number]
+
+            if not project_name_row.empty:
+                project_name = project_name_row['Project Name'].values[0]
+
+            else:
+                raise IndexError("Project number not found in DataFrame")
+
+        except IndexError:
+            Error_window("Project Error", f"Project Number '{project_number}' not found.")
+            return
+
+        # Create the output file path
+        current_date = datetime.now().strftime("%m-%d-%Y")
+        default_directory = r"T:\3PL Files\Shipment Template"
+        default_filename = f"{project_name} Work Order {current_date}.csv"
+        output_path = os.path.join(default_directory, default_filename)
+
+        # Save the cleaned CSV file with the appropriate name
+        try:
+            os.makedirs(default_directory, exist_ok=True)
+            write_cleaned_csv(output_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_path}")
+
+        except (OSError, IOError):
+            # If the default path is unavailable, ask the user for the output directory and base filename
+            output_base_path = filedialog.asksaveasfilename(
+                title="Save Output File as Work Order",
+                defaultextension=".csv",
+                filetypes=[("CSV Files", "*.csv")],
+                initialfile=default_filename
+            )
+            if not output_base_path:
+                return  # User cancelled the save dialog
+
+            # Save to the selected path
+            write_cleaned_csv(output_base_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_base_path}")
+
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
+
 
 
 # Function to filter and save the input file as an ASN
@@ -648,73 +654,80 @@ def Eagle_ASN_button_click():
     if not input_path:
         return  # User cancelled the file dialog
 
-    # Clean the input file to remove additional commas
-    cleaned_data = check_and_remove_additional_commas(input_path)
-    write_cleaned_csv(input_path, cleaned_data)
-
-    # Initialize errors list
-    errors = []
-
-    # Check the character length of the columns in the cleaned data
-    check_character_length_ASN(cleaned_data, allowable_lengths_for_shipments, errors)
-
-    # If there are errors, stop execution
-    if errors:
-        Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
-        return
-
-    # Read the fourth row, first column to get the project number using pandas
-    project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
-
-    # Convert project_number to string and strip any whitespace
-    project_number = str(project_number).strip()
-
-    # Ensure no extra spaces or unexpected characters in column names
-    projects.columns = projects.columns.str.strip()
-
-    # Convert the 'Project Number' column to string and strip any whitespace
-    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
-
-    # Map the project number to the project name using project dataframe from the projects.csv file using pandas
     try:
-        project_name_row = projects[projects['Project Number'] == project_number]
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
 
-        if not project_name_row.empty:
-            project_name = project_name_row['Project Name'].values[0]
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
 
-        else:
-            raise IndexError("Project number not found in DataFrame")
+        # Initialize errors list
+        errors = []
 
-    except IndexError:
-        Error_window("Project error", f"Project Number '{project_number}' not found.")
-        return
+        # Check the character length of the columns in the cleaned data
+        check_character_length_ASN(cleaned_data, allowable_lengths_for_shipments, errors)
 
-    # Create the output file path
-    current_date = datetime.now().strftime("%m-%d-%Y")
-    default_directory = r"T:\3PL Files\ASN Template"
-    default_filename = f"{project_name} ASN {current_date}.csv"
-    output_path = os.path.join(default_directory, default_filename)
+        # If there are errors, stop execution
+        if errors:
+            Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
+            return
 
-    # Save the cleaned CSV file with the appropriate name
-    try:
-        os.makedirs(default_directory, exist_ok=True)
-        write_cleaned_csv(output_path, cleaned_data)
-        Success_window(f"File saved successfully at\n{output_path}")
+        # Read the fourth row, first column to get the project number using pandas
+        project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
 
-    except (OSError, IOError):
-        # If the default path is unavailable, ask the user for the output directory and base filename
-        output_base_path = filedialog.asksaveasfilename(
-            title="Save Output File as ASN",
-            defaultextension=".csv",
-            filetypes=[("CSV Files", "*.csv")],
-            initialfile=default_filename
-        )
-        if not output_base_path:
-            return  # User cancelled the save dialog
+        # Convert project_number to string and strip any whitespace
+        project_number = str(project_number).strip()
 
-        # Save to the selected path
-        write_cleaned_csv(output_base_path, cleaned_data)
-        Success_window(f"File saved successfully at\n{output_base_path}")
+        # Ensure no extra spaces or unexpected characters in column names
+        projects.columns = projects.columns.str.strip()
+
+        # Convert the 'Project Number' column to string and strip any whitespace
+        projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+        # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+        try:
+            project_name_row = projects[projects['Project Number'] == project_number]
+
+            if not project_name_row.empty:
+                project_name = project_name_row['Project Name'].values[0]
+
+            else:
+                raise IndexError("Project number not found in DataFrame")
+
+        except IndexError:
+            Error_window("Project error", f"Project Number '{project_number}' not found.")
+            return
+
+        # Create the output file path
+        current_date = datetime.now().strftime("%m-%d-%Y")
+        default_directory = r"T:\3PL Files\ASN Template"
+        default_filename = f"{project_name} ASN {current_date}.csv"
+        output_path = os.path.join(default_directory, default_filename)
+
+        # Save the cleaned CSV file with the appropriate name
+        try:
+            os.makedirs(default_directory, exist_ok=True)
+            write_cleaned_csv(output_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_path}")
+
+        except (OSError, IOError):
+            # If the default path is unavailable, ask the user for the output directory and base filename
+            output_base_path = filedialog.asksaveasfilename(
+                title="Save Output File as ASN",
+                defaultextension=".csv",
+                filetypes=[("CSV Files", "*.csv")],
+                initialfile=default_filename
+            )
+            if not output_base_path:
+                return  # User cancelled the save dialog
+
+            # Save to the selected path
+            write_cleaned_csv(output_base_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_base_path}")
+
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
 
 # Open the assets folder and allow the user to open a .csv file from "assets/Templates"
 def modify_template():
@@ -798,8 +811,6 @@ def center_window(window, width, height):
     window.geometry(f'{width}x{height}+{x}+{y}')
 
 
-
-
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
@@ -851,6 +862,7 @@ tab_1 = My_tab.add("The Eagle")
 tab_2 = My_tab.add("USCG")
 tab_3 = My_tab.add("Terminix")
 tab_4 = My_tab.add("UPS")
+tab_5 = My_tab.add("Bored")
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
 ## Background image for tab_1 / Eagle
