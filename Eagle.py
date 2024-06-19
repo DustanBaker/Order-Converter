@@ -274,8 +274,13 @@ def check_character_length_ASN(df, length_dict, errors):
 
 
 def USCG_Error_Handling(input_file):
+    # Detect encoding for CSV
+    with open(input_file, 'rb') as f:
+        result = chardet.detect(f.read())
+    encoding = result['encoding']
+
     # Read the CSV file into a DataFrame, skipping the first row after the header
-    df = pd.read_csv(input_file, skiprows=[1])
+    df = pd.read_csv(input_file, skiprows=[1], encoding=encoding)
 
     # Define the valid kit IDs based on the template
     valid_kit_ids = uscg_template['Kit ID'].unique()
@@ -293,10 +298,14 @@ def USCG_Error_Handling(input_file):
     return errors
 
 
-# Functino to check for errors in the Terminix CSV file
 def Terminix_error_handling(input_file):
+    # Detect encoding for CSV
+    with open(input_file, 'rb') as f:
+        result = chardet.detect(f.read())
+    encoding = result['encoding']
+
     # Read the CSV file into a DataFrame, skipping the first row after the header
-    df = pd.read_csv(input_file, skiprows=[1])
+    df = pd.read_csv(input_file, skiprows=[1], encoding=encoding)
 
     # Define the valid kit IDs from the template
     valid_kit_ids = terminix_template['Kit ID'].unique()
@@ -862,7 +871,6 @@ tab_1 = My_tab.add("The Eagle")
 tab_2 = My_tab.add("USCG")
 tab_3 = My_tab.add("Terminix")
 tab_4 = My_tab.add("UPS")
-tab_5 = My_tab.add("Bored")
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
 ## Background image for tab_1 / Eagle
