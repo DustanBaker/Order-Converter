@@ -9,6 +9,8 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog, messagebox
+from typing import Any
+
 import customtkinter
 import pandas as pd
 import chardet
@@ -17,6 +19,9 @@ import pygame
 import random
 import webbrowser
 import shutil
+
+from pandas import Series, DataFrame
+
 #import pyi_splash
 
 #pyi_splash.update_text("PyInstaller is a great software!")
@@ -56,7 +61,7 @@ required_files = [
     'assets/Templates/ups_batch.csv',
     'assets/Templates/projects.csv',
     'assets/Templates/USCG_data.csv',
-    'assets/Templates/terminix_data.csv',
+    'assets/Templates/USCG_WO_data.csv',
     'assets/images/Eagle.ico',
 
 ]
@@ -68,14 +73,14 @@ if check_files_exist(required_files):
         ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='latin1')
         projects = pd.read_csv('assets/Templates/projects.csv', encoding='latin1')
         uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='latin1')
-        terminix_template = pd.read_csv('assets/Templates/terminix_data.csv', encoding='latin1')
+        USCG_WO_template = pd.read_csv('assets/Templates/USCG_WO_data.csv', encoding='latin1')
     except UnicodeDecodeError:
         messagebox.showerror("Encoding Error", "Error reading the file with 'latin1' encoding. Trying 'ISO-8859-1'...")
         try:
             ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='ISO-8859-1')
             projects = pd.read_csv('assets/Templates/projects.csv', encoding='ISO-8859-1')
             uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='ISO-8859-1')
-            terminix_template = pd.read_csv('assets/Templates/terminix_data.csv', encoding='ISO-8859-1')
+            USCG_WO_template = pd.read_csv('assets/Templates/USCG_WO_data.csv', encoding='ISO-8859-1')
         except Exception as e:
             messagebox.showerror("File Error", f"An error occurred while reading the files: {e}")
 else:
@@ -89,6 +94,7 @@ def read_file(file_path):
             result = chardet.detect(f.read())
         encoding = result['encoding']
         df = pd.read_csv(file_path, encoding=encoding)
+
     else:
         raise ValueError("Unsupported file format")
     return df
@@ -148,8 +154,6 @@ allowable_lengths_for_ASN = {
 
 }
 
-# Extract the data from column 31
-uscg_template['31'] = uscg_template.iloc[:, 7]  # Assuming column index is zero-based
 
 
 # Function to manipulate the input uscg data using the template
@@ -173,40 +177,59 @@ def manipulate_uscg_data_using_template(input_data, template):
                     if column in row and pd.notna(template_row[column]):
                         new_row[column] = template_row[column]
 
-                # Prepend the column 31 value to the existing data in the input row
-                if '31' in new_row and '31' in template_row:
-                    new_row['31'] = f"{template_row['31']}{row['31']}"
 
                 manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
     return manipulated_data
 
-
-# Function to manipulate the input terminix data using the template
-def manipulate_terminix_data_using_template(input_data, template):
+# Function to manipulate the input uscg data using the template for work orders
+# Function to manipulate the input USCG data using the template for work orders
+# Function to manipulate the input USCG data using the template for work orders
+def manipulate_uscg_WO_data_using_template(input_data, template):
     # Copy the first row under the header without manipulation
     manipulated_data = pd.DataFrame([input_data.iloc[0]])
 
     # Iterate over the rest of the input data starting from the second row
     for _, row in input_data.iloc[1:].iterrows():
-        kit_id = row['12']
+        # Use the correct column for Kit ID in input_data
+        kit_id = row['Kit ID'] if 'Kit ID' in row else row['12']  # Use a fallback if needed
+
+        # Ensure we're comparing using the correct column name in the template
         matching_template_rows = template[template['Kit ID'] == kit_id]
 
         if matching_template_rows.empty:
-            manipulated_data = pd.concat([manipulated_data, pd.DataFrame([row])])
+            manipulated_data = pd.concat([manipulated_data, pd.DataFrame([row])], ignore_index=True)
         else:
             for _, template_row in matching_template_rows.iterrows():
                 new_row = row.copy()
+
+                # Update new_row with values from template_row where not NaN
                 for column in template_row.index:
                     if column in row and pd.notna(template_row[column]):
                         new_row[column] = template_row[column]
-                manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])])
 
-    return manipulated_data
+                manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])], ignore_index=True)
+
+    # Group by column 12 and sum column 13
+    manipulated_data['13'] = pd.to_numeric(manipulated_data['13'], errors='coerce')  # Ensure column 13 is numeric
+    grouped_data = manipulated_data.groupby('12', as_index=False).agg({'13': 'sum'})
+
+    # Merge the grouped data back to retain other columns, but only keep one row per unique '12' value
+    result = manipulated_data.drop_duplicates(subset=['12']).drop(columns='13').merge(grouped_data, on='12')
+
+    # Reorder columns to place column '13' immediately after column '12'
+    cols = list(result.columns)
+    col_12_index = cols.index('12')
+    reordered_cols = cols[:col_12_index + 1] + ['13'] + cols[col_12_index + 1:-1]
+    reordered_result: Series | None | DataFrame | Any = result[reordered_cols]
+
+    return reordered_result
 
 
 # create a function that reads a CSV file into a dictionary and removes additional commas
-def check_and_remove_additional_commas(df):
+def check_and_remove_additional_commas(df: pd.DataFrame) -> pd.DataFrame:
+    # Remove rows where all columns are empty
+    df = df.dropna(how='all')
     replacements = {
         ',': '',
         "'": '',
@@ -227,8 +250,11 @@ def check_and_remove_additional_commas(df):
     for col in df.select_dtypes(include=[object]).columns:
         df[col] = df[col].replace(replacements, regex=True)
 
-    return df
 
+
+
+
+    return df
 
 
 # create a function that writes a cleaned CSV file
@@ -279,8 +305,13 @@ def USCG_Error_Handling(input_file):
         result = chardet.detect(f.read())
     encoding = result['encoding']
 
+
     # Read the CSV file into a DataFrame, skipping the first row after the header
     df = pd.read_csv(input_file, skiprows=[1], encoding=encoding)
+    # Remove rows where all columns are empty
+    df = df.dropna(how='all')
+
+
 
     # Define the valid kit IDs based on the template
     valid_kit_ids = uscg_template['Kit ID'].unique()
@@ -294,31 +325,6 @@ def USCG_Error_Handling(input_file):
         if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
             errors.append(
                 f" row {index + 3}")  # Adding 3 to match the original line numbering
-
-    return errors
-
-
-def Terminix_error_handling(input_file):
-    # Detect encoding for CSV
-    with open(input_file, 'rb') as f:
-        result = chardet.detect(f.read())
-    encoding = result['encoding']
-
-    # Read the CSV file into a DataFrame, skipping the first row after the header
-    df = pd.read_csv(input_file, skiprows=[1], encoding=encoding)
-
-    # Define the valid kit IDs from the template
-    valid_kit_ids = terminix_template['Kit ID'].unique()
-
-    # Initialize an empty list to store errors
-    errors = []
-
-    # Iterate over the rows in the DataFrame
-    for index, row in df.iterrows():
-        # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
-        if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
-            errors.append(
-                f"row {index + 3}")  # Adding 3 to match the original line numbering
 
     return errors
 
@@ -349,8 +355,22 @@ def convert_USCG_csv(input_path, output_path, template):
     save_as_utf8(manipulated_data, output_path)
 
 
-def convert_Terminix_csv(input_path, output_path, template):
-    # Read the file (CSV) into the pandas DataFrame
+def sum_by_column_12(file_path):
+    # Read the CSV file
+    data = pd.read_csv(file_path)
+
+    # Ensure column 13 contains numeric data
+    data['13'] = pd.to_numeric(data['13'], errors='coerce')
+
+    # Group by column 12 and sum the values in column 13
+    result = data.groupby('12')['13'].sum().reset_index()
+
+    # Return the result
+    return result
+
+# Function to convert USCG CSV using pandas and the template
+def convert_USCG_WO_csv(input_path, output_path, template):
+    # Read the file (CSV or Excel) into the pandas DataFrame
     input_data = read_file(input_path)
 
     # Clean the commas from the input data
@@ -361,34 +381,37 @@ def convert_Terminix_csv(input_path, output_path, template):
     errors = []
 
     # Check the character length of the columns in the cleaned data
-    check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
+    check_character_length_shipment(input_data, allowable_lengths_for_shipments, errors)
 
     # If there are errors, raise a ValueError
     if errors:
         raise ValueError("\n".join(errors))
 
-    # Manipulate the data using the template (assuming this function exists and is implemented)
-    manipulated_data = manipulate_terminix_data_using_template(cleaned_data, template)
+    # Manipulate the data using the template
+    manipulated_data = manipulate_uscg_WO_data_using_template(input_data, template)
 
     # Write the manipulated data to a new CSV file with UTF-8 encoding
     save_as_utf8(manipulated_data, output_path)
 
 
-# Create a function that creates a tkinter button that calls the convert_csv function for USCG
+
+
+# Function to convert the input file to a shipment
 def USCG_convert_button_click():
+    # Select the input file using a file dialog
     input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
     if not input_path:
         return  # User cancelled the file dialog
 
-    # Check for correct USCG kit ID
+    # Check for correct USCG kit ID using the file path
     errors = USCG_Error_Handling(input_path)
     if errors:
         Error_window("ERROR -> Kit ID", f"There are incorrect Kit ID's in: {errors}")
         return
 
     try:
-        # Read the file into a DataFrame
+        # Read the file into a DataFrame after Kit ID validation
         input_data = read_file(input_path)
 
         # Clean the commas from the input data
@@ -403,6 +426,7 @@ def USCG_convert_button_click():
         # If there are errors, raise a ValueError
         if errors:
             raise ValueError("\n".join(errors))
+
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
         return
@@ -428,27 +452,32 @@ def USCG_convert_button_click():
         output_base_path = default_output_path
 
     try:
+        # Call the conversion function
         convert_USCG_csv(input_path, output_base_path, uscg_template)
         Success_window(f"File saved successfully at\n{output_base_path}")
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
 
-
-
-def Terminix_convert_button_click():
-    global error_added
-    input_path = filedialog.askopenfilename(title="Select Input File for Terminix", filetypes=[("CSV Files", "*.csv")])
+# Function to convert the input file to a Work Order
+def USCG_WO_button_click():
+    # Select the input file using a file dialog
+    input_path = filedialog.askopenfilename(title="Select Input File for USCG", filetypes=[("CSV Files", "*.csv")])
 
     if not input_path:
         return  # User cancelled the file dialog
 
+    # Check for correct USCG kit ID using the file path
+    errors = USCG_Error_Handling(input_path)
+    if errors:
+        Error_window("ERROR -> Kit ID", f"There are incorrect Kit ID's in: {errors}")
+        return
+
     try:
-        # Read the file into a DataFrame
+        # Read the file into a DataFrame after Kit ID validation
         input_data = read_file(input_path)
 
         # Clean the commas from the input data
         cleaned_data = check_and_remove_additional_commas(input_data)
-        write_cleaned_csv(input_path, cleaned_data)
 
         # Initialize errors list
         errors = []
@@ -456,17 +485,19 @@ def Terminix_convert_button_click():
         # Check the character length of the columns in the cleaned data
         check_character_length_shipment(cleaned_data, allowable_lengths_for_shipments, errors)
 
-        # If there are errors, raise a ValueError
+        # If there are errors, stop execution
         if errors:
-            raise ValueError("\n".join(errors))
+            Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
+            return
+
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
-        return  # Exit the function if there is an error
+        return
 
     # Create the default output file path
     current_date = datetime.now().strftime("%m-%d-%Y")
     default_directory = r"T:\3PL Files\Shipment Template"
-    default_filename = f"Terminix Shipment {current_date}.csv"
+    default_filename = f"USCG Work Order {current_date}.csv"
     default_output_path = os.path.join(default_directory, default_filename)
 
     # Check if the default directory exists
@@ -484,23 +515,15 @@ def Terminix_convert_button_click():
         output_base_path = default_output_path
 
     try:
-        convert_Terminix_csv(input_path, output_base_path, terminix_template)
+        # Call the conversion function for Work Orders using USCG_WO_template instead of uscg_template
+        convert_USCG_WO_csv(input_path, output_base_path, USCG_WO_template)
+
+
         Success_window(f"File saved successfully at\n{output_base_path}")
+
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
 
-
-
-# Create a functin that converts the input file to UPS format
-def UPS_convert_button_click():
-    global error_added  # Declare error_added as a global variable
-    # Get the input file path
-    input_path = filedialog.askopenfilename(title="Select Input File for UPS", filetypes=[("CSV Files", "*.csv")])
-
-    # Clean the input file to remove additional commas
-    write_cleaned_csv(input_path, check_and_remove_additional_commas(input_path))
-
-    # Check for correct UPS kit ID
 
 
 # functinon to filter and save the input file as a shipment
@@ -869,8 +892,7 @@ My_tab.pack(fill="both", expand=True, side="top")
 # create a tab
 tab_1 = My_tab.add("The Eagle")
 tab_2 = My_tab.add("USCG")
-tab_3 = My_tab.add("Terminix")
-tab_4 = My_tab.add("UPS")
+
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
 ## Background image for tab_1 / Eagle
@@ -909,69 +931,17 @@ USCG_image = customtkinter.CTkImage(light_image=Image.open('assets/images/backgr
 USCG_label = customtkinter.CTkLabel(tab_2, text="", image=USCG_image)
 USCG_label.pack(side='top', pady=20)
 
-# Create a button that calls the convert_csv function for USCG
+# Create a button that calls the convert_shipment_csv function for USCG
 convert_button = customtkinter.CTkButton(tab_2,
-                                         text="Convert CSV", command=USCG_convert_button_click,
+                                         text="Convert Shipment", command=USCG_convert_button_click,
                                          border_width=2, border_color="gold")
 convert_button.pack(side='bottom', pady=20)
 
-# TAB 3 / Terminix_________________________________________________________________________________________
-# Background image for tab_3 / Terminix
-terminix_image = customtkinter.CTkImage(light_image=Image.open('assets/images/terminix.jpg'),
-                                        dark_image=Image.open('assets/images/terminix.jpg'),
-                                        size=(450, 200))
-
-terminix_label = customtkinter.CTkLabel(tab_3, text="", image=terminix_image)
-terminix_label.pack(side='top', pady=20)
-
-# Legend for tab_2 / Terminix
-terminix_legend = customtkinter.CTkLabel(tab_3,
-                                         text="standard = ground w/return lbl\n 2day = FedEx 2 Day w/return lbl\n"
-                                              "overnight = overnight priority w/return lbl", font=("Helvetica", 16))
-terminix_legend.pack(side='top', pady=20)
-
-# Create a button that calls the convert_csv function for Terminix
-Convert_button_terminix = customtkinter.CTkButton(tab_3,
-                                                  text="Convert CSV", command=Terminix_convert_button_click,
-                                                  border_width=2, border_color="Red", fg_color="green")
-Convert_button_terminix.pack(side='bottom', pady=20)
-
-# TAB 4 / UPS_____________________________________________________________________________________________
-## Background image for tab_3 / UPS
-UPS_image = customtkinter.CTkImage(light_image=Image.open('assets/images/ups.png'),
-                                   dark_image=Image.open('assets/images/ups.png'),
-                                   size=(300, 175))
-
-UPS_label = customtkinter.CTkLabel(tab_4, text="", image=UPS_image)
-UPS_label.pack(side='top', pady=10)
-
-# create a drop down menu for shipping accounts
-Third_party_shipping = customtkinter.CTkComboBox(tab_4,
-                                                 values=["Select account", "Premier", "Strivr", "Bank Of America"])
-Third_party_shipping.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the weight of the package
-Weight = customtkinter.CTkEntry(tab_4, placeholder_text="Weight of packages in lbs", width=180)
-Weight.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the length of the package
-Length = customtkinter.CTkEntry(tab_4, placeholder_text="Length of packages in inches", width=180)
-Length.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the width of the package
-Width = customtkinter.CTkEntry(tab_4, placeholder_text="Width of packages in inches", width=180)
-Width.pack(side='top', pady=10)
-
-# create an open text box for the user to enter the height of the package
-Height = customtkinter.CTkEntry(tab_4, placeholder_text="Height of packages in inches", width=180)
-Height.pack(side='top', pady=10)
-
-# Create a button that calls the convert_csv function for UPS batch file conversion________________________
-Convert_button_UPS = customtkinter.CTkButton(tab_4,
-                                             text="Convert CSV", command=UPS_convert_button_click,
-                                             border_width=2, border_color="#FFB500", fg_color="#351C15")
-Convert_button_UPS.pack(side='bottom', pady=20)
-
+#Create a button that calls the convert_Work_Order_csv function for USCG
+convert_button = customtkinter.CTkButton(tab_2,
+                                         text="Convert Work Order", command=USCG_WO_button_click,
+                                         border_width=2, border_color="gold")
+convert_button.pack(side='bottom', pady=20)
 
 
 
