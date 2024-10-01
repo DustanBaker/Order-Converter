@@ -22,15 +22,15 @@ import shutil
 
 from pandas import Series, DataFrame
 
-#import pyi_splash
+import pyi_splash
 
-#pyi_splash.update_text("PyInstaller is a great software!")
-#pyi_splash.update_text("Second time's a charm!")
+pyi_splash.update_text("PyInstaller is a great software!")
+pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-#pyi_splash.close()
+pyi_splash.close()
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -846,7 +846,7 @@ def center_window(window, width, height):
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager 1.7")
+root.title("Eagle File Manager 1.8")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
