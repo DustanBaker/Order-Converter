@@ -22,15 +22,15 @@ import shutil
 
 from pandas import Series, DataFrame
 
-import pyi_splash
+#import pyi_splash
 
-pyi_splash.update_text("PyInstaller is a great software!")
-pyi_splash.update_text("Second time's a charm!")
+#pyi_splash.update_text("PyInstaller is a great software!")
+#pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-pyi_splash.close()
+#pyi_splash.close()
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -761,6 +761,222 @@ def Eagle_ASN_button_click():
     except (OSError, IOError, ValueError) as e:
         Error_window("Error", f"Error: {e}")
 
+
+# functinon to filter and save the input file as a shipment for B511
+def B511_shipment_button_click():
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    try:
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
+
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
+
+
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
+        return
+
+    project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
+    project_number = str(project_number).strip()
+    projects.columns = projects.columns.str.strip()
+    projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+    try:
+        project_name_row = projects[projects['Project Number'] == project_number]
+        if not project_name_row.empty:
+            project_name = project_name_row['Project Name'].values[0]
+        else:
+            raise IndexError("Project number not found in DataFrame")
+    except IndexError:
+        Error_window("Project error", f"Project Number '{project_number}' not found.")
+        return
+
+    current_date = datetime.now().strftime("%m-%d-%Y")
+    default_directory = r"T:\3PL Files\Shipment Template"
+    default_filename = f"{project_name} Shipment {current_date}.csv"
+    output_path = os.path.join(default_directory, default_filename)
+
+    try:
+        os.makedirs(default_directory, exist_ok=True)
+        write_cleaned_csv(output_path, cleaned_data)
+        Success_window(f"File saved successfully at \n{output_path}")
+    except (OSError, IOError):
+        output_base_path = filedialog.asksaveasfilename(
+            title="Save Output File as Shipment",
+            defaultextension=".csv",
+            filetypes=[("CSV Files", "*.csv")],
+            initialfile=default_filename
+        )
+        if not output_base_path:
+            return
+        write_cleaned_csv(output_base_path, cleaned_data)
+        Success_window(f"File saved successfully at\n{output_base_path}")
+
+# Function to convert the input file to a Work Order
+def B511_WO_button_click():
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    try:
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
+
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
+
+        # If there are errors, stop execution
+        if errors:
+            Error_window("Character Length Error", f"Too many Characters \n,".join(errors))
+            return
+
+        # Read the third row, first column to get the project number using pandas
+        project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
+
+        # Convert project_number to string and strip any whitespace
+        project_number = str(project_number).strip()
+
+        # Ensure no extra spaces or unexpected characters in column names
+        projects.columns = projects.columns.str.strip()
+
+        # Convert the 'Project Number' column to string and strip any whitespace
+        projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+        # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+        try:
+            project_name_row = projects[projects['Project Number'] == project_number]
+
+            if not project_name_row.empty:
+                project_name = project_name_row['Project Name'].values[0]
+
+            else:
+                raise IndexError("Project number not found in DataFrame")
+
+        except IndexError:
+            Error_window("Project Error", f"Project Number '{project_number}' not found.")
+            return
+
+        # Create the output file path
+        current_date = datetime.now().strftime("%m-%d-%Y")
+        default_directory = r"T:\3PL Files\Shipment Template"
+        default_filename = f"{project_name} Work Order {current_date}.csv"
+        output_path = os.path.join(default_directory, default_filename)
+
+        # Save the cleaned CSV file with the appropriate name
+        try:
+            os.makedirs(default_directory, exist_ok=True)
+            write_cleaned_csv(output_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_path}")
+
+        except (OSError, IOError):
+            # If the default path is unavailable, ask the user for the output directory and base filename
+            output_base_path = filedialog.asksaveasfilename(
+                title="Save Output File as Work Order",
+                defaultextension=".csv",
+                filetypes=[("CSV Files", "*.csv")],
+                initialfile=default_filename
+            )
+            if not output_base_path:
+                return  # User cancelled the save dialog
+
+            # Save to the selected path
+            write_cleaned_csv(output_base_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_base_path}")
+
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
+
+
+
+# Function to filter and save the input file as an ASN
+def B511_ASN_button_click():
+    # Get the input file path
+    input_path = filedialog.askopenfilename(title="Select Input File", filetypes=[("CSV Files", "*.csv")])
+
+    if not input_path:
+        return  # User cancelled the file dialog
+
+    try:
+        # Read the file into a DataFrame
+        input_data = read_file(input_path)
+
+        # Clean the commas from the input data
+        cleaned_data = check_and_remove_additional_commas(input_data)
+        write_cleaned_csv(input_path, cleaned_data)
+
+
+        # If there are errors, stop execution
+        if errors:
+            Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
+            return
+
+        # Read the fourth row, first column to get the project number using pandas
+        project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
+
+        # Convert project_number to string and strip any whitespace
+        project_number = str(project_number).strip()
+
+        # Ensure no extra spaces or unexpected characters in column names
+        projects.columns = projects.columns.str.strip()
+
+        # Convert the 'Project Number' column to string and strip any whitespace
+        projects['Project Number'] = projects['Project Number'].astype(str).str.strip()
+
+        # Map the project number to the project name using project dataframe from the projects.csv file using pandas
+        try:
+            project_name_row = projects[projects['Project Number'] == project_number]
+
+            if not project_name_row.empty:
+                project_name = project_name_row['Project Name'].values[0]
+
+            else:
+                raise IndexError("Project number not found in DataFrame")
+
+        except IndexError:
+            Error_window("Project error", f"Project Number '{project_number}' not found.")
+            return
+
+        # Create the output file path
+        current_date = datetime.now().strftime("%m-%d-%Y")
+        default_directory = r"T:\3PL Files\ASN Template"
+        default_filename = f"{project_name} ASN {current_date}.csv"
+        output_path = os.path.join(default_directory, default_filename)
+
+        # Save the cleaned CSV file with the appropriate name
+        try:
+            os.makedirs(default_directory, exist_ok=True)
+            write_cleaned_csv(output_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_path}")
+
+        except (OSError, IOError):
+            # If the default path is unavailable, ask the user for the output directory and base filename
+            output_base_path = filedialog.asksaveasfilename(
+                title="Save Output File as ASN",
+                defaultextension=".csv",
+                filetypes=[("CSV Files", "*.csv")],
+                initialfile=default_filename
+            )
+            if not output_base_path:
+                return  # User cancelled the save dialog
+
+            # Save to the selected path
+            write_cleaned_csv(output_base_path, cleaned_data)
+            Success_window(f"File saved successfully at\n{output_base_path}")
+
+    except (OSError, IOError, ValueError) as e:
+        Error_window("Error", f"Error: {e}")
+
+
+
 # Open the assets folder and allow the user to open a .csv file from "assets/Templates"
 def modify_template():
     Caution_window("CAUTION", "Please make sure to save the file in the same format, name and location as the original template.\n"
@@ -892,6 +1108,7 @@ My_tab.pack(fill="both", expand=True, side="top")
 # create a tab
 tab_1 = My_tab.add("The Eagle")
 tab_2 = My_tab.add("USCG")
+tab_3 = My_tab.add("B511")
 
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
@@ -942,6 +1159,37 @@ convert_button = customtkinter.CTkButton(tab_2,
                                          text="Convert Work Order", command=USCG_WO_button_click,
                                          border_width=2, border_color="gold")
 convert_button.pack(side='bottom', pady=20)
+
+
+# TAB 3 / B511_____________________________________________________________________________________________
+# Background image for tab_3 / B511
+B511_image = customtkinter.CTkImage(light_image=Image.open('assets/images/eagle.jpg'),
+                                    dark_image=Image.open('assets/images/eagle.jpg'),
+                                    size=(400, 400))
+# Create a label for the B511 image
+B511_label = customtkinter.CTkLabel(tab_3, text="", image=B511_image)
+B511_label.pack(side='top', pady=10)
+
+# Create a button that calls the convert_Work_Order_csv function for B511
+convert_button = customtkinter.CTkButton(tab_3,
+                                            text="Filter and save Work Order", command=B511_WO_button_click,
+                                            border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
+convert_button.pack(side='bottom', pady=10)
+
+
+# Create a button that calls the convert_shipment_csv function for B511
+convert_button = customtkinter.CTkButton(tab_3,
+                                            text="Filter and save Shipment", command=B511_shipment_button_click,
+                                            border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
+convert_button.pack(side='bottom', pady=10)
+
+
+
+# Create a button that calls the convert_ASN_csv function for B511
+convert_button = customtkinter.CTkButton(tab_3,
+                                            text="Filter and save ASN", command=B511_ASN_button_click,
+                                            border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
+convert_button.pack(side='bottom', pady=10)
 
 
 
