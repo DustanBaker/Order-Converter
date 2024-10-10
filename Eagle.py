@@ -2,15 +2,12 @@
 # Created by Dusty Baker December 2023
 # Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
 #pyinstaller --onefile --noconsole --icon=assets/images/Eagle.ico --splash=assets/images/Splash.png Eagle.py
-import csv
-import importlib
 import os
 from datetime import datetime
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog, messagebox
 from typing import Any
-
 import customtkinter
 import pandas as pd
 import chardet
@@ -22,15 +19,15 @@ import shutil
 
 from pandas import Series, DataFrame
 
-#import pyi_splash
+import pyi_splash
 
-#pyi_splash.update_text("PyInstaller is a great software!")
-#pyi_splash.update_text("Second time's a charm!")
+pyi_splash.update_text("PyInstaller is a great software!")
+pyi_splash.update_text("Second time's a charm!")
 
     # Close the splash screen. It does not matter when the call
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
-#pyi_splash.close()
+pyi_splash.close()
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -58,7 +55,6 @@ def check_files_exist(file_paths):
 
 # List of required files
 required_files = [
-    'assets/Templates/ups_batch.csv',
     'assets/Templates/projects.csv',
     'assets/Templates/USCG_data.csv',
     'assets/Templates/USCG_WO_data.csv',
@@ -67,17 +63,16 @@ required_files = [
 ]
 
 # Check if required files exist
+
 if check_files_exist(required_files):
     # Try reading the CSV files with 'latin1' encoding first, then try 'ISO-8859-1' if it fails
     try:
-        ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='latin1')
         projects = pd.read_csv('assets/Templates/projects.csv', encoding='latin1')
         uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='latin1')
         USCG_WO_template = pd.read_csv('assets/Templates/USCG_WO_data.csv', encoding='latin1')
     except UnicodeDecodeError:
         messagebox.showerror("Encoding Error", "Error reading the file with 'latin1' encoding. Trying 'ISO-8859-1'...")
         try:
-            ups_batch = pd.read_csv('assets/Templates/ups_batch.csv', encoding='ISO-8859-1')
             projects = pd.read_csv('assets/Templates/projects.csv', encoding='ISO-8859-1')
             uscg_template = pd.read_csv('assets/Templates/USCG_data.csv', encoding='ISO-8859-1')
             USCG_WO_template = pd.read_csv('assets/Templates/USCG_WO_data.csv', encoding='ISO-8859-1')
@@ -86,7 +81,8 @@ if check_files_exist(required_files):
 else:
     # Exit the application if files are missing
     exit()
-
+    
+    
 def read_file(file_path):
     if file_path.endswith('.csv'):
         # Detect encoding for CSV
@@ -798,7 +794,7 @@ def B511_shipment_button_click():
         return
 
     current_date = datetime.now().strftime("%m-%d-%Y")
-    default_directory = r"T:\3PL Files\Shipment Template"
+    default_directory = r"T:\InterfacesFiles\In"
     default_filename = f"{project_name} Shipment {current_date}.csv"
     output_path = os.path.join(default_directory, default_filename)
 
@@ -834,10 +830,6 @@ def B511_WO_button_click():
         cleaned_data = check_and_remove_additional_commas(input_data)
         write_cleaned_csv(input_path, cleaned_data)
 
-        # If there are errors, stop execution
-        if errors:
-            Error_window("Character Length Error", f"Too many Characters \n,".join(errors))
-            return
 
         # Read the third row, first column to get the project number using pandas
         project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
@@ -867,7 +859,7 @@ def B511_WO_button_click():
 
         # Create the output file path
         current_date = datetime.now().strftime("%m-%d-%Y")
-        default_directory = r"T:\3PL Files\Shipment Template"
+        default_directory = r"T:\InterfacesFiles\In"
         default_filename = f"{project_name} Work Order {current_date}.csv"
         output_path = os.path.join(default_directory, default_filename)
 
@@ -914,11 +906,6 @@ def B511_ASN_button_click():
         write_cleaned_csv(input_path, cleaned_data)
 
 
-        # If there are errors, stop execution
-        if errors:
-            Error_window("Character Length Error", f"Too many Characters, \n".join(errors))
-            return
-
         # Read the fourth row, first column to get the project number using pandas
         project_number = pd.read_csv(input_path, header=None, nrows=4).iloc[3, 0]
 
@@ -947,7 +934,7 @@ def B511_ASN_button_click():
 
         # Create the output file path
         current_date = datetime.now().strftime("%m-%d-%Y")
-        default_directory = r"T:\3PL Files\ASN Template"
+        default_directory = r"T:\InterfacesFiles\In"
         default_filename = f"{project_name} ASN {current_date}.csv"
         output_path = os.path.join(default_directory, default_filename)
 
@@ -981,7 +968,7 @@ def B511_ASN_button_click():
 def modify_template():
     Caution_window("CAUTION", "Please make sure to save the file in the same format, name and location as the original template.\n"
                               "Any changes made to the file may affect the functionality of the application.")
-    file_path = filedialog.askopenfilename(title="Select a Template File", initialdir="assets/Templates",
+    file_path = filedialog.askopenfilename(title="Select a Template File", initialdir="P:\Eagle_assets/Templates",
                                            filetypes=[("CSV Files", "*.csv")])
     if file_path:
         try:
@@ -1062,7 +1049,7 @@ def center_window(window, width, height):
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager 1.8")
+root.title("Eagle File Manager 1.8.1     B511 enabled")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
