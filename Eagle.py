@@ -138,10 +138,12 @@ allowable_lengths_for_shipments = {
 allowable_lengths_for_ASN = {
     '1': 20,
     '2': 64,
-    '3': 20,
-    '4': 64,
+    '3': 12,
+    '4': 20,
     '5': 64,
-    '6': 20,
+    '6': 64,
+    '7': 20,
+    '8': 64,
     '9': 64,
     '10': 64,
     '11': 64,
@@ -1053,7 +1055,7 @@ def center_window(window, width, height):
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager 1.8.1     B511 enabled")
+root.title("Eagle File Manager 1.8.2    now with Updated Template Technology\u00AE")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
