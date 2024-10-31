@@ -18,7 +18,7 @@ import webbrowser
 import shutil
 
 from pandas import Series, DataFrame
-
+'''
 import pyi_splash
 
 pyi_splash.update_text("PyInstaller is a great software!")
@@ -28,7 +28,7 @@ pyi_splash.update_text("Second time's a charm!")
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
 pyi_splash.close()
-
+'''
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
@@ -110,24 +110,28 @@ allowable_lengths_for_shipments = {
     '9': 32,
     '10': 32,
     '11': 32,
-    '12': 20,
-    '14': 64,
-    '15': 64,
+    '12': 24,
+    '13': 64,
+    '14': 20,
     '16': 64,
     '17': 64,
     '18': 64,
-    '19': 255,
-    '21': 64,
-    '22': 11,
+    '19': 64,
+    '20': 64,
+    '21': 255,
     '23': 64,
-    '24': 64,
+    '24': 11,
     '25': 64,
     '26': 64,
-    '27': 11,
+    '27': 64,
     '28': 64,
-    '29': 64,
+    '29': 11,
     '30': 64,
-    '31': 64
+    '31': 64,
+    '32': 64,
+    '33': 32,
+    '34': 64,
+    '35': 64,
 }
 
 # Define the maximum allowable lengths for ASN templates inputs
@@ -159,7 +163,7 @@ def manipulate_uscg_data_using_template(input_data, template):
 
     # Iterate over the rest of the input data starting from the second row
     for _, row in input_data.iloc[1:].iterrows():
-        kit_id = row['12']
+        kit_id = row['14']
         matching_template_rows = template[template['Kit ID'] == kit_id]
 
         if matching_template_rows.empty:
@@ -178,8 +182,7 @@ def manipulate_uscg_data_using_template(input_data, template):
 
     return manipulated_data
 
-# Function to manipulate the input uscg data using the template for work orders
-# Function to manipulate the input USCG data using the template for work orders
+
 # Function to manipulate the input USCG data using the template for work orders
 def manipulate_uscg_WO_data_using_template(input_data, template):
     # Copy the first row under the header without manipulation
@@ -188,7 +191,7 @@ def manipulate_uscg_WO_data_using_template(input_data, template):
     # Iterate over the rest of the input data starting from the second row
     for _, row in input_data.iloc[1:].iterrows():
         # Use the correct column for Kit ID in input_data
-        kit_id = row['Kit ID'] if 'Kit ID' in row else row['12']  # Use a fallback if needed
+        kit_id = row['Kit ID'] if 'Kit ID' in row else row['14']  # Use a fallback if needed
 
         # Ensure we're comparing using the correct column name in the template
         matching_template_rows = template[template['Kit ID'] == kit_id]
@@ -207,25 +210,27 @@ def manipulate_uscg_WO_data_using_template(input_data, template):
                 manipulated_data = pd.concat([manipulated_data, pd.DataFrame([new_row])], ignore_index=True)
 
     # Group by column 12 and sum column 13
-    manipulated_data['13'] = pd.to_numeric(manipulated_data['13'], errors='coerce')  # Ensure column 13 is numeric
-    grouped_data = manipulated_data.groupby('12', as_index=False).agg({'13': 'sum'})
+    manipulated_data['15'] = pd.to_numeric(manipulated_data['15'], errors='coerce')  # Ensure column 13 is numeric
+    grouped_data = manipulated_data.groupby('14', as_index=False).agg({'15': 'sum'})
 
     # Merge the grouped data back to retain other columns, but only keep one row per unique '12' value
-    result = manipulated_data.drop_duplicates(subset=['12']).drop(columns='13').merge(grouped_data, on='12')
+    result = manipulated_data.drop_duplicates(subset=['14']).drop(columns='15').merge(grouped_data, on='14')
 
     # Reorder columns to place column '13' immediately after column '12'
     cols = list(result.columns)
-    col_12_index = cols.index('12')
-    reordered_cols = cols[:col_12_index + 1] + ['13'] + cols[col_12_index + 1:-1]
+    col_12_index = cols.index('14')
+    reordered_cols = cols[:col_12_index + 1] + ['15'] + cols[col_12_index + 1:-1]
     reordered_result: Series | None | DataFrame | Any = result[reordered_cols]
 
     return reordered_result
 
 
-# create a function that reads a CSV file into a dictionary and removes additional commas
+# Create a function that reads a CSV file into a dictionary and removes additional commas and line breaks
 def check_and_remove_additional_commas(df: pd.DataFrame) -> pd.DataFrame:
     # Remove rows where all columns are empty
     df = df.dropna(how='all')
+
+    # Define replacements, including newlines and carriage returns
     replacements = {
         ',': '',
         "'": '',
@@ -240,17 +245,16 @@ def check_and_remove_additional_commas(df: pd.DataFrame) -> pd.DataFrame:
         r'\}': '',
         r'\?': '',
         r'\!': '',
+        r'\n': '',   # Removes newline characters
+        r'\r': ''    # Removes carriage return characters
     }
 
     # Apply the replacements only to string columns
     for col in df.select_dtypes(include=[object]).columns:
         df[col] = df[col].replace(replacements, regex=True)
 
-
-
-
-
     return df
+
 
 
 # create a function that writes a cleaned CSV file
@@ -318,7 +322,7 @@ def USCG_Error_Handling(input_file):
     # Iterate over the rows in the DataFrame
     for index, row in df.iterrows():
         # Check if the row has more than 11 columns and if the 12th column value is not in valid_kit_ids
-        if len(row) > 11 and row.iloc[11] not in valid_kit_ids:
+        if len(row) > 11 and row.iloc[13] not in valid_kit_ids:
             errors.append(
                 f" row {index + 3}")  # Adding 3 to match the original line numbering
 
@@ -355,17 +359,17 @@ def sum_by_column_12(file_path):
     # Read the CSV file
     data = pd.read_csv(file_path)
 
-    # Ensure column 13 contains numeric data
-    data['13'] = pd.to_numeric(data['13'], errors='coerce')
+    # Ensure column 15 contains numeric data
+    data['15'] = pd.to_numeric(data['15'], errors='coerce')
 
-    # Group by column 12 and sum the values in column 13
-    result = data.groupby('12')['13'].sum().reset_index()
+    # Group by column 14 and sum the values in column 15
+    result = data.groupby('14')['15'].sum().reset_index()
 
     # Return the result
     return result
 
 # Function to convert USCG CSV using pandas and the template
-def convert_USCG_WO_csv(input_path, output_path, template):
+def convert_USCG_WO_csv(input_path="Out.csv", output_path="USCG_WO_data.csv", template=USCG_WO_template):
     # Read the file (CSV or Excel) into the pandas DataFrame
     input_data = read_file(input_path)
 
