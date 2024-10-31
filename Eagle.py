@@ -18,7 +18,7 @@ import webbrowser
 import shutil
 
 from pandas import Series, DataFrame
-'''
+
 import pyi_splash
 
 pyi_splash.update_text("PyInstaller is a great software!")
@@ -28,7 +28,7 @@ pyi_splash.update_text("Second time's a charm!")
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
 pyi_splash.close()
-'''
+
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
