@@ -994,38 +994,52 @@ def autosize_columns(ws):
 
 
 def DFWR():
-    input_path = filedialog.askopenfilename(title="Import Mantis Detail Inventory Report All Clients with Client Type", filetypes=[("Excel File", "*.xlsx")])
+    # Local imports to ensure chart classes are available even if module-level changed
+    from openpyxl.chart import PieChart, BarChart, Reference
+    from openpyxl.chart.label import DataLabelList
+    from openpyxl.formatting.rule import DataBarRule
+
+    input_path = filedialog.askopenfilename(
+        title="Import Mantis Detail Inventory Report All Clients with Client Type",
+        filetypes=[("Excel File", "*.xlsx")]
+    )
     if not input_path:
         return
 
+    # ---- Load data ----
     df = pd.read_excel(input_path, header=3)
     df.columns = df.columns.str.strip()
 
+    # ---- Build Inventory Summary (grouped) for ws1 ----
     grouped_df = df.groupby(['Client', 'PO#', 'Order #', 'Description'], as_index=False)[
         ['Count Qty On Hand', 'Count Quantity Committed']
     ].sum()
 
+    # Helper columns
     grouped_df.insert(1, 'Dell PM', '')
     grouped_df.insert(7, 'Shipping by EOM', '')
     grouped_df.insert(8, 'Full or Partial', '')
 
+    # Merge project info
     grouped_df = grouped_df.merge(
         projects[['Project Name', 'Dell PM']],
         left_on='Client',
         right_on='Project Name',
         how='left'
     )
-
     grouped_df['Dell PM'] = grouped_df['Dell PM_y'].combine_first(grouped_df['Dell PM_x'])
     grouped_df = grouped_df.drop(columns=['Dell PM_x', 'Dell PM_y', 'Project Name'])
 
+    # Reorder to put Dell PM after Client
     cols = grouped_df.columns.tolist()
     cols.insert(1, cols.pop(cols.index('Dell PM')))
     grouped_df = grouped_df[cols]
 
+    # Numeric columns
     grouped_df['Count Quantity Committed'] = pd.to_numeric(grouped_df['Count Quantity Committed'], errors='coerce').fillna(0)
     grouped_df['Count Qty On Hand'] = pd.to_numeric(grouped_df['Count Qty On Hand'], errors='coerce').fillna(0)
 
+    # Business logic
     grouped_df['Shipping by EOM'] = grouped_df['Count Quantity Committed'].apply(lambda x: 'N' if abs(x) < 1e-6 else 'Y')
     grouped_df['Full or Partial'] = grouped_df.apply(
         lambda row: 'TBD' if abs(row['Count Quantity Committed']) < 1e-6
@@ -1033,6 +1047,7 @@ def DFWR():
         axis=1
     )
 
+    # ---- Save intermediate file and load workbook ----
     output_file = "Dell Federal Weekly Reporting.xlsx"
     grouped_df.to_excel(output_file, index=False)
 
@@ -1041,11 +1056,13 @@ def DFWR():
     ws1 = wb["Inventory Summary"]
     autosize_columns(ws1)
 
+    # ---- Original data sheet (ws2) ----
     ws2 = wb.create_sheet(title="Mantis Detailed Inventory")
     for r in dataframe_to_rows(df, index=False, header=True):
         ws2.append(r)
     autosize_columns(ws2)
 
+    # ---- Project Summary sheet (ws3) ----
     client_summary = grouped_df[['Client']].drop_duplicates().copy()
     client_summary = client_summary.merge(
         projects[['Project Name', 'Status']],
@@ -1060,64 +1077,131 @@ def DFWR():
         ws3.append(r)
     autosize_columns(ws3)
 
-    # ----- Pie chart data from original df (Column J) -----
+    # ---------- Build the extended summary table on ws3 ----------
+    # Ensure numeric source columns
     df['Count Qty On Hand'] = pd.to_numeric(df['Count Qty On Hand'], errors='coerce').fillna(0)
-    inventory_by_client = (
+
+    # Column Q by position (17th column, index 16). If missing, use zeros to avoid errors.
+    if df.shape[1] >= 17:
+        col_q_series = pd.to_numeric(df.iloc[:, 16], errors='coerce').fillna(0)
+    else:
+        col_q_series = pd.Series([0] * len(df), index=df.index)
+    df['__col_q__'] = col_q_series
+
+    # Totals by client
+    totals = (
         df.groupby('Client')['Count Qty On Hand']
         .sum()
         .reset_index()
-        .sort_values(by='Count Qty On Hand', ascending=False)
+        .rename(columns={'Count Qty On Hand': 'Inventory QTY'})
     )
-    inventory_by_client = inventory_by_client[inventory_by_client['Client'] != "Non Conforming"]
-    inventory_by_client = inventory_by_client[
-        (inventory_by_client['Client'].notna()) &
-        (inventory_by_client['Client'].astype(str).str.strip() != "")
-    ].reset_index(drop=True)
 
-    # Write summary table on ws3
+    # Totals where column Q >= 90
+    totals_q90 = (
+        df[df['__col_q__'] >= 90]
+        .groupby('Client')['Count Qty On Hand']
+        .sum()
+        .reset_index()
+        .rename(columns={'Count Qty On Hand': 'Inventory QTY ≥90 Days'})
+    )
+
+    # Merge totals and clean
+    inventory_summary = totals.merge(totals_q90, on='Client', how='left').fillna(0)
+    inventory_summary = inventory_summary[
+        (inventory_summary['Client'] != "Non Conforming") &
+        (inventory_summary['Client'].notna()) &
+        (inventory_summary['Client'].astype(str).str.strip() != "")
+    ].sort_values(by='Inventory QTY', ascending=False).reset_index(drop=True)
+
+    # % column
+    inventory_summary['% ≥90'] = (
+        inventory_summary['Inventory QTY ≥90 Days'] / inventory_summary['Inventory QTY']
+    ).replace([float('inf'), float('-inf')], 0).fillna(0)
+
+    # ---- Write the table headers ----
     start_row = ws3.max_row + 3
     ws3.cell(row=start_row, column=1, value="Client")
     ws3.cell(row=start_row, column=2, value="Inventory QTY")
+    ws3.cell(row=start_row, column=3, value="Inventory QTY ≥90 Days")
+    ws3.cell(row=start_row, column=4, value="% ≥90")
 
+    # Header styling for this table
     header_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
     header_font = Font(color="FFFFFF", bold=True)
     center_align = Alignment(horizontal="center", vertical="center")
-    for col in range(1, 3):
+    for col in range(1, 5):
         c = ws3.cell(row=start_row, column=col)
         c.fill = header_fill
         c.font = header_font
         c.alignment = center_align
 
-    for i, row in inventory_by_client.iterrows():
+    # ---- Write data rows ----
+    for i, row in inventory_summary.iterrows():
         ws3.cell(row=start_row + i + 1, column=1, value=row['Client'])
-        ws3.cell(row=start_row + i + 1, column=2, value=row['Count Qty On Hand'])
+        ws3.cell(row=start_row + i + 1, column=2, value=row['Inventory QTY'])
+        ws3.cell(row=start_row + i + 1, column=3, value=row['Inventory QTY ≥90 Days'])
+        pct_cell = ws3.cell(row=start_row + i + 1, column=4, value=float(row['% ≥90']))
+        pct_cell.number_format = '0.0%'
 
-    # Compute chart range AFTER writing rows
+    # Ranges for charts
     data_start = start_row + 1
-    data_end = start_row + len(inventory_by_client)
+    data_end = start_row + len(inventory_summary)
 
-    # Only create chart if there is data
+    # Optional: data bars on % ≥90 to quickly scan
     if data_end >= data_start:
+        db_rule = DataBarRule(start_type="num", start_value=0, end_type="num", end_value=1, color="63BE7B")
+        ws3.conditional_formatting.add(f"D{data_start}:D{data_end}", db_rule)
+
+    # ---- Charts (only if there’s data) ----
+    if data_end >= data_start:
+        # --- Pie (based on total inventory) ---
         pie = PieChart()
-        pie.title = "Inventory Distribution by Client"
+        pie.title = "Inventory Distribution by Project"
         pie.dataLabels = DataLabelList()
         pie.dataLabels.showPercent = True
         pie.dataLabels.showVal = False
         pie.dataLabels.showCatName = False
-        pie.dataLabels.dLblPos = "inEnd"  # "ctr", "inEnd", "bestFit", "outEnd"
+       
+        pie.dataLabels.showLeaderLines = True  # <-- add leader lines
 
-        data = Reference(ws3, min_col=2, min_row=data_start, max_row=data_end)
-        labels = Reference(ws3, min_col=1, min_row=data_start, max_row=data_end)
+        pie_data = Reference(ws3, min_col=2, min_row=data_start, max_row=data_end)   # Inventory QTY
+        pie_labels = Reference(ws3, min_col=1, min_row=data_start, max_row=data_end) # Client
+        pie.add_data(pie_data, titles_from_data=False)
+        pie.set_categories(pie_labels)
 
-        pie.add_data(data, titles_from_data=False)
-        pie.set_categories(labels)
-        ws3.add_chart(pie, "H5")
+        # Place the pie chart
+        ws3.add_chart(pie, "H2")
+        # --- Simple Bar: Total Inventory by Client (absolute) ---
+        abs_bar = BarChart()
+        abs_bar.type = "col"
+        abs_bar.grouping = "clustered"
+        abs_bar.title = "Total Inventory by Project"
+        abs_bar.y_axis.title = "Quantity"
+        abs_bar.x_axis.title = "Client"
 
-    # Reorder sheets
+        # Series = ONLY Inventory QTY (col 2); include header row for series title
+        abs_data = Reference(ws3, min_col=2, max_col=2, min_row=start_row, max_row=data_end)
+        abs_cats = Reference(ws3, min_col=1, min_row=data_start, max_row=data_end)
+
+        abs_bar.add_data(abs_data, titles_from_data=True)
+        abs_bar.set_categories(abs_cats)
+
+        # Show values on bars
+        abs_bar.dataLabels = DataLabelList()
+        abs_bar.dataLabels.showVal = True
+
+        # Optional cosmetics
+        abs_bar.legend = None  # single series doesn't need a legend
+        abs_bar.varyColors = False
+
+        # Place chart so it doesn't overlap others
+        ws3.add_chart(abs_bar, "H16" )
+
+    # ---- Reorder tabs ----
     desired_order = ["Project Summary", "Inventory Summary", "Mantis Detailed Inventory"]
     wb._sheets = [wb[s] for s in desired_order]
 
-    # Global formatting
+    # ---- Global formatting (center + borders + header row 1) ----
     center_align_all = Alignment(horizontal='center', vertical='center')
     thin_border = Border(
         left=Side(style='thin', color='000000'),
@@ -1139,6 +1223,7 @@ def DFWR():
                 cell.border = thin_border
         sheet.freeze_panes = "A2"
 
+    # ---- Save dialog ----
     today_str = datetime.today().strftime("%B %d, %Y")
     default_filename = f"Dell Federal Weekly Reporting ({today_str}).xlsx"
     output_path = filedialog.asksaveasfilename(
@@ -1152,9 +1237,6 @@ def DFWR():
 
     wb.save(output_path)
     Success_window("File saved successfully")
-
-
-
 
         
 
