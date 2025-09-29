@@ -1,42 +1,60 @@
-Project Number,Project Name
-14,VA Hardware
-15,DISA
-16,Quest 
-17,MV Transportation
-18,QEB
-19,Leidos
-21,ElectricBoat
-22,Inforamatica
-23,USAF
-24,Applied Materials
-28,DISA 4ENO
-29,HKS
-30,Danaher
-31,Baymark
-34,Morgan Andvanced
-35,Arkansas Childrens Hospital
-37,USAF-ADX
-38,PCI Gaming
-39,USCIS
-40,2T-FED
-41,2T-CS
-42,DHHS
-43,Strivr
-44,SAIC
-45,Terminix
-46,Veralto
-47,DHA
-49,USAF-DCGS
-50,Mattress Firm
-51,USDA
-52,DCMA
-53,USCG
-54,FDA
-55,Rimkus
-57,Halo
-58,Non-Con
-59,USMA
-60,Intertek
-61,ANS
-62,Motorola
-63,AFRS
+Project Number,Project Name,Dell PM,Status
+14,VA Hardware,,
+15,DISA,,
+16,Quest ,,
+17,MV Transportation,,
+18,QEB,Sara Whitehead,Executing
+19,Leidos,,
+21,ElectricBoat,,
+22,Inforamatica,,
+23,USAF,,
+24,Applied Materials,,
+28,DISA 4ENO,John Fontana,Executing
+29,HKS,,
+30,Danaher,,
+31,Baymark,,
+34,Morgan Andvanced,,
+35,Arkansas Childrens Hospital,,
+37,USAF-ADX,,
+38,PCI Gaming,,
+39,USCIS,,
+40,2T-FED,,
+41,2T-CS,,
+42,DHHS,,
+43,Strivr,,
+44,SAIC,,
+45,Terminix,,
+46,Veralto,,
+47,DHA,,
+49,USAF-DCGS,Richard Anderson,Executing
+50,Mattress Firm,,
+51,USDA,Brian Bulger,Executing
+52,DCMA,,
+53,USCG Transition,Brian Bulger,Executing
+54,FDA,,
+55,Rimkus,,
+57,Halo,,
+58,Non-Con,,
+59,USMA,Richard Anderson,Closing
+60,Intertek,,
+61,ANS,,
+62,Motorola,,
+63,AFRS,,
+64,DHHS-OCIO,Richard Anderson,Executing
+65,Internal Client,,
+67,PL-Parts,,
+68,FED-USAF-NGG,,
+69,QTS,,
+70,AMBA,,
+71,Mattress Firm,,
+72,Premier 3PL,,
+74,Austin Energy,,
+76,Clearway Health,,
+77,HMD,,
+78,USAF-ISN,Richard Anderson,Onboarding
+79,GRS,,
+80,Wingtech,,
+81,Verizon,,
+82,EcoFlow,,
+83,DTRA,John Fontana,Onboarding
+84,DV8,,

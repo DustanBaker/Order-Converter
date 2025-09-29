@@ -3,6 +3,9 @@
 # Updated by Dusty Baker May 2024 to add UPS shipping options, and EAGLE file manager.
 #pyinstaller --onefile --noconsole --icon=assets/images/Eagle.ico --splash=assets/images/Splash.png Eagle.py
 import os
+import threading
+from customtkinter import CTkProgressBar
+from threading import Thread
 from datetime import datetime
 import tkinter as tk
 from tkinter import *
@@ -16,9 +19,13 @@ import pygame
 import random
 import webbrowser
 import shutil
-
+from openpyxl import load_workbook
+from openpyxl.styles import Alignment, PatternFill, Font, Border, Side
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.chart import PieChart, Reference
+from openpyxl.chart.label import DataLabelList
 from pandas import Series, DataFrame
-
+'''
 import pyi_splash
 
 pyi_splash.update_text("PyInstaller is a great software!")
@@ -28,7 +35,7 @@ pyi_splash.update_text("Second time's a charm!")
     # to this function is made, the splash screen remains open until
     # this function is called or the Python program is terminated.
 pyi_splash.close()
-
+'''
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
@@ -970,6 +977,192 @@ def B511_ASN_button_click():
 
 
 
+        # Reporting
+
+
+def autosize_columns(ws):
+    for column in ws.columns:
+        max_length = 0
+        column = list(column)
+        for cell in column:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        ws.column_dimensions[column[0].column_letter].width = max_length + 2
+
+
+def DFWR():
+    input_path = filedialog.askopenfilename(title="Import Mantis Detail Inventory Report All Clients with Client Type", filetypes=[("Excel File", "*.xlsx")])
+    if not input_path:
+        return
+
+    df = pd.read_excel(input_path, header=3)
+    df.columns = df.columns.str.strip()
+
+    grouped_df = df.groupby(['Client', 'PO#', 'Order #', 'Description'], as_index=False)[
+        ['Count Qty On Hand', 'Count Quantity Committed']
+    ].sum()
+
+    grouped_df.insert(1, 'Dell PM', '')
+    grouped_df.insert(7, 'Shipping by EOM', '')
+    grouped_df.insert(8, 'Full or Partial', '')
+
+    grouped_df = grouped_df.merge(
+        projects[['Project Name', 'Dell PM']],
+        left_on='Client',
+        right_on='Project Name',
+        how='left'
+    )
+
+    grouped_df['Dell PM'] = grouped_df['Dell PM_y'].combine_first(grouped_df['Dell PM_x'])
+    grouped_df = grouped_df.drop(columns=['Dell PM_x', 'Dell PM_y', 'Project Name'])
+
+    cols = grouped_df.columns.tolist()
+    cols.insert(1, cols.pop(cols.index('Dell PM')))
+    grouped_df = grouped_df[cols]
+
+    grouped_df['Count Quantity Committed'] = pd.to_numeric(grouped_df['Count Quantity Committed'], errors='coerce').fillna(0)
+    grouped_df['Count Qty On Hand'] = pd.to_numeric(grouped_df['Count Qty On Hand'], errors='coerce').fillna(0)
+
+    grouped_df['Shipping by EOM'] = grouped_df['Count Quantity Committed'].apply(lambda x: 'N' if abs(x) < 1e-6 else 'Y')
+    grouped_df['Full or Partial'] = grouped_df.apply(
+        lambda row: 'TBD' if abs(row['Count Quantity Committed']) < 1e-6
+        else ('Partial' if row['Count Quantity Committed'] < row['Count Qty On Hand'] else 'Full'),
+        axis=1
+    )
+
+    output_file = "Dell Federal Weekly Reporting.xlsx"
+    grouped_df.to_excel(output_file, index=False)
+
+    wb = load_workbook(output_file)
+    wb.worksheets[0].title = "Inventory Summary"
+    ws1 = wb["Inventory Summary"]
+    autosize_columns(ws1)
+
+    ws2 = wb.create_sheet(title="Mantis Detailed Inventory")
+    for r in dataframe_to_rows(df, index=False, header=True):
+        ws2.append(r)
+    autosize_columns(ws2)
+
+    client_summary = grouped_df[['Client']].drop_duplicates().copy()
+    client_summary = client_summary.merge(
+        projects[['Project Name', 'Status']],
+        left_on='Client',
+        right_on='Project Name',
+        how='left'
+    ).drop(columns=['Project Name'])
+    client_summary = client_summary[client_summary['Client'] != "Non Conforming"]
+
+    ws3 = wb.create_sheet(title="Project Summary")
+    for r in dataframe_to_rows(client_summary, index=False, header=True):
+        ws3.append(r)
+    autosize_columns(ws3)
+
+    # ----- Pie chart data from original df (Column J) -----
+    df['Count Qty On Hand'] = pd.to_numeric(df['Count Qty On Hand'], errors='coerce').fillna(0)
+    inventory_by_client = (
+        df.groupby('Client')['Count Qty On Hand']
+        .sum()
+        .reset_index()
+        .sort_values(by='Count Qty On Hand', ascending=False)
+    )
+    inventory_by_client = inventory_by_client[inventory_by_client['Client'] != "Non Conforming"]
+    inventory_by_client = inventory_by_client[
+        (inventory_by_client['Client'].notna()) &
+        (inventory_by_client['Client'].astype(str).str.strip() != "")
+    ].reset_index(drop=True)
+
+    # Write summary table on ws3
+    start_row = ws3.max_row + 3
+    ws3.cell(row=start_row, column=1, value="Client")
+    ws3.cell(row=start_row, column=2, value="Inventory QTY")
+
+    header_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+    header_font = Font(color="FFFFFF", bold=True)
+    center_align = Alignment(horizontal="center", vertical="center")
+    for col in range(1, 3):
+        c = ws3.cell(row=start_row, column=col)
+        c.fill = header_fill
+        c.font = header_font
+        c.alignment = center_align
+
+    for i, row in inventory_by_client.iterrows():
+        ws3.cell(row=start_row + i + 1, column=1, value=row['Client'])
+        ws3.cell(row=start_row + i + 1, column=2, value=row['Count Qty On Hand'])
+
+    # Compute chart range AFTER writing rows
+    data_start = start_row + 1
+    data_end = start_row + len(inventory_by_client)
+
+    # Only create chart if there is data
+    if data_end >= data_start:
+        pie = PieChart()
+        pie.title = "Inventory Distribution by Client"
+        pie.dataLabels = DataLabelList()
+        pie.dataLabels.showPercent = True
+        pie.dataLabels.showVal = False
+        pie.dataLabels.showCatName = False
+        pie.dataLabels.dLblPos = "inEnd"  # "ctr", "inEnd", "bestFit", "outEnd"
+
+        data = Reference(ws3, min_col=2, min_row=data_start, max_row=data_end)
+        labels = Reference(ws3, min_col=1, min_row=data_start, max_row=data_end)
+
+        pie.add_data(data, titles_from_data=False)
+        pie.set_categories(labels)
+        ws3.add_chart(pie, "H5")
+
+    # Reorder sheets
+    desired_order = ["Project Summary", "Inventory Summary", "Mantis Detailed Inventory"]
+    wb._sheets = [wb[s] for s in desired_order]
+
+    # Global formatting
+    center_align_all = Alignment(horizontal='center', vertical='center')
+    thin_border = Border(
+        left=Side(style='thin', color='000000'),
+        right=Side(style='thin', color='000000'),
+        top=Side(style='thin', color='000000'),
+        bottom=Side(style='thin', color='000000')
+    )
+    for sheet in wb.worksheets:
+        for row in sheet.iter_rows():
+            for cell in row:
+                if cell.value is not None:
+                    cell.alignment = center_align_all
+                    cell.border = thin_border
+        for cell in sheet[1]:
+            if cell.value is not None:
+                cell.fill = header_fill
+                cell.font = header_font
+                cell.alignment = center_align_all
+                cell.border = thin_border
+        sheet.freeze_panes = "A2"
+
+    today_str = datetime.today().strftime("%B %d, %Y")
+    default_filename = f"Dell Federal Weekly Reporting ({today_str}).xlsx"
+    output_path = filedialog.asksaveasfilename(
+        title="Save Report As",
+        defaultextension=".xlsx",
+        initialfile=default_filename,
+        filetypes=[("Excel files", "*.xlsx")]
+    )
+    if not output_path:
+        return
+
+    wb.save(output_path)
+    Success_window("File saved successfully")
+
+
+
+
+        
+
+
+
+
+
+
 # Open the assets folder and allow the user to open a .csv file from "assets/Templates"
 def modify_template():
     Caution_window("CAUTION", "Please make sure to save the file in the same format, name and location as the original template.\n"
@@ -1052,10 +1245,11 @@ def center_window(window, width, height):
     window.geometry(f'{width}x{height}+{x}+{y}')
 
 
+
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager 1.8.2    now with Updated Template Technology\u00AE")
+root.title("Eagle File Manager 1.9 -Dell Federal Weekly Reporting\u00AE added!")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen
@@ -1102,6 +1296,7 @@ My_tab.pack(fill="both", expand=True, side="top")
 tab_1 = My_tab.add("The Eagle")
 tab_2 = My_tab.add("USCG")
 tab_3 = My_tab.add("B511")
+tab_4 = My_tab.add("Reporting")
 
 
 # TAB 1 / The EAGLE_________________________________________________________________________________________
@@ -1183,6 +1378,30 @@ convert_button = customtkinter.CTkButton(tab_3,
                                             text="Filter and save ASN", command=B511_ASN_button_click,
                                             border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
 convert_button.pack(side='bottom', pady=10)
+
+
+# TAB 4 / Reporting_____________________________________________________________________________________________________
+# Create a button that calls the Dell Federal Weekly reporting function
+
+def run_dfwr_with_loading():
+    progress_bar = CTkProgressBar(master=root)
+    progress_bar.pack(pady=10)
+    progress_bar.start()
+
+    def task():
+        try:
+            DFWR()
+        finally:
+            # Stop progress bar on completion
+            progress_bar.stop()
+            progress_bar.destroy()
+
+    Thread(target=task).start()
+
+DFWR_Button = customtkinter.CTkButton(tab_4,
+                                            text="Dell Federal Weekly Reporting", command=run_dfwr_with_loading,
+                                            border_width=2, border_color="#a73a3a", fg_color="#1a1b1d",hover_color="#764f33")
+DFWR_Button.pack(side='bottom', pady=10)
 
 
 
