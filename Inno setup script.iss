@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Eagle File Manager"
-#define MyAppVersion "1.8.2"
+#define MyAppVersion "1.9"
 #define MyAppPublisher "Baker Studios"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Eagle.exe"
@@ -21,12 +21,12 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\License.txt
+LicenseFile=C:\Users\dbaker\PycharmProjects\Order-Converter\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
-OutputDir=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter
-OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.8.2_SETUP
-SetupIconFile=C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\assets\images\Eagle.ico
+OutputDir=C:\Users\dbaker\PycharmProjects\Order-Converter
+OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.9_SETUP
+SetupIconFile=C:\Users\dbaker\PycharmProjects\Order-Converter\assets\images\Eagle.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -38,8 +38,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\dusty\OneDrive\Documents\GitHub\Order-Converter\assets\*"; DestDir: "{app}/assets"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\dbaker\PycharmProjects\Order-Converter\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\dbaker\PycharmProjects\Order-Converter\assets\*"; DestDir: "{app}/assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
