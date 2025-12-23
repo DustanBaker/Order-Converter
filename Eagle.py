@@ -43,9 +43,9 @@ customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), da
 pygame.mixer.init()
 
 # Load the sound file
-notification = pygame.mixer.Sound('assets/sounds/Propaganda.mp3')
-intro = pygame.mixer.Sound('assets/sounds/LiberTea.mp3')
-Error = pygame.mixer.Sound('assets/sounds/Error.mp3')
+notification = pygame.mixer.Sound('assets/sounds/arc-raiders-loot.mp3')
+intro = pygame.mixer.Sound('assets/sounds/arc_raiders.mp3')
+Error = pygame.mixer.Sound('assets/sounds/arc-raiders-elevator.mp3')
 
 # Initialize error_added variable to keep track of whether an error message has been added
 error_added = False
@@ -1331,7 +1331,7 @@ def center_window(window, width, height):
 # GUI_______________________________________________________________________________________________________
 
 root = customtkinter.CTk()
-root.title("Eagle File Manager 1.9 -Dell Federal Weekly Reporting\u00AE added!")
+root.title("Eagle File Manager\u00AE 1.9.1 -now compatible with Parcel Integration")
 root.geometry("600x650")
 root.iconbitmap('assets/images/Eagle.ico')
 #locate the main window in the center of the screen

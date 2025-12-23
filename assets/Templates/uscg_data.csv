@@ -1,140 +1,146 @@
 Kit ID,14,18,22,23,25,27
 Item SKU,Item SKU,Service level,Shippable,Carrier,PM,account number
 Item SKU 20,Item SKU,Service level,Shippable,Carrier,PM,account number
-SO-001,210-BFWP,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SO-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SO-002,210-BFWP,Priority Overnight,1,FDE,Dusty Baker,791214637
-SO-003,210-BFWP,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SO-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SO-004,210-BFWP,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SO-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SO-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-001,210-BGBL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SR-002,210-BGBL,Priority Overnight,1,FDE,Dusty Baker,791214637
-SR-003,210-BGBL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SR-004,210-BGBL,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SR-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-006,210-BGBL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-006,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-007,210-BGBL,Priority Overnight,1,FDE,Dusty Baker,791214637
-SR-008,210-BGBL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-008,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SR-005,210-BGBL,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-005,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SR-010,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AO-001,210-BLDN,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AO-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-AO-002,210-BLDN,Priority Overnight,1,FDE,Dusty Baker,791214637
-AO-003,210-BLDN,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AO-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-AO-004,210-BLDN,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AO-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-AO-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AR-001,210-BLWL-ADV,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AR-001,210-AZBE,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AR-002,210-BLWL-ADV,Priority Overnight,1,FDE,Dusty Baker,791214637
-AR-003,210-BLWL-ADV,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AR-003,210-AZBE,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AR-004,210-BLWL-ADV,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AR-004,210-AZBE,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AR-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-001,210-BCFT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SRR-002,210-BCFT,Priority Overnight,1,FDE,Dusty Baker,791214637
-SRR-003,210-BCFT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SRR-004,210-BCFT,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SRR-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-006,210-BCFT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-006,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-007,210-BCFT,Priority Overnight,1,FDE,Dusty Baker,791214637
-SRR-008,210-BCFT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-008,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRR-009,210-BCFT,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-009,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRR-010,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRRL-001,210-BCFT-SRRL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRRL-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRRL-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SRRL-002,210-BCFT-SRRL,Priority Overnight,1,FDE,Dusty Baker,791214637
-SRRL-003,210-BCFT-SRRL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRRL-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRRL-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SRRL-004,210-BCFT-SRRL,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRRL-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRRL-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SRRL-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SE-001,210-AMDT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SE-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SE-002,210-AMDT,Priority Overnight,1,FDE,Dusty Baker,791214637
-SE-003,210-AMDT,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SE-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SE-004,210-AMDT,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SE-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SE-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AE-001,210-AMDT-AE,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AE-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-AE-002,210-AMDT-AE,Priority Overnight,1,FDE,Dusty Baker,791214637
-AE-003,210-AMDT-AE,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-AE-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-AE-004,210-AMDT-AE,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-AE-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-AE-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-001,210-BGGU,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-RE-002,210-BGGU,Priority Overnight,1,FDE,Dusty Baker,791214637
-RE-003,210-BGGU,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-RE-004,210-BGGU,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-RE-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-006,210-BLMW,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-006,210-BEXB,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-007,210-BLMW,Priority Overnight,1,FDE,Dusty Baker,791214637
-RE-008,210-BLMW,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-008,210-BEXB,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-RE-009,210-BLMW,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-009,210-BEXB,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-RE-010,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-K-001,210-BLDW,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-K-002,210-BLDW,Priority Overnight,1,FDE,Dusty Baker,791214637
-K-003,210-BLDW,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-K-004,210-BLDW,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-K-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRV-001,210-BLPS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRV-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRV-002,210-BLPS,Priority Overnight,1,FDE,Dusty Baker,791214637
-SRV-003,210-BLPS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRV-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SRV-004,210-BLPS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRV-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SRV-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-ARV-001,210-BLPS-CEL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-ARV-001,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-ARV-002,210-BLPS-CEL,Priority Overnight,1,FDE,Dusty Baker,791214637
-ARV-003,210-BLPS-CEL,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-ARV-003,210-AZBS,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-ARV-004,210-BLPS-CEL,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-ARV-004,210-AZBS,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-ARV-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SVDI-001,210-BCXC,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SVDI-001,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SVDI-002,210-BCXC,Priority Overnight,1,FDE,Dusty Baker,791214637
-SVDI-003,210-BCXC,FedEx 2Day ,1,FDE,Dusty Baker,791214637
-SVDI-003,210-BBBY,FedEx 2Day ,,FDE,Dusty Baker,791214637
-SVDI-004,210-BCXC,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
-SVDI-004,210-BBBY,FedEx 2Day with return Lbl,,FDE,Dusty Baker,791214637
-SVDI-005,TBD,FedEx 2Day with return Lbl,1,FDE,Dusty Baker,791214637
+SO-001,210-BFWP,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SO-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SO-002,210-BFWP,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SO-003,210-BFWP,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SO-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SO-004,210-BFWP,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SO-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SO-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SO-006,210-BQBQ ,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-001,210-BGBL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SR-002,210-BGBL,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-003,210-BGBL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SR-004,210-BGBL,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SR-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-006,210-BGBL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-006,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-007,210-BGBL,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-008,210-BGBL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-008,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-005,210-BGBL,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-005,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-010,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SR-011,210-BPCV ,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SR-011,210-BRPS,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+AO-001,210-BLDN,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AO-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+AO-002,210-BLDN,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+AO-003,210-BLDN,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AO-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+AO-004,210-BLDN,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AO-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+AO-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AR-001,210-BLWL-ADV,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AR-001,210-AZBE,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AR-002,210-BLWL-ADV,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+AR-003,210-BLWL-ADV,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AR-003,210-AZBE,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AR-004,210-BLWL-ADV,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AR-004,210-AZBE,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AR-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-001,210-BCFT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SRR-002,210-BCFT,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-003,210-BCFT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SRR-004,210-BCFT,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SRR-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-006,210-BCFT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-006,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-007,210-BCFT,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-008,210-BCFT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-008,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRR-009,210-BCFT,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-009,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRR-010,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRRL-001,210-BCFT-SRRL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRRL-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRRL-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SRRL-002,210-BCFT-SRRL,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRRL-003,210-BCFT-SRRL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRRL-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRRL-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SRRL-004,210-BCFT-SRRL,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRRL-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRRL-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SRRL-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SE-001,210-AMDT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SE-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SE-002,210-AMDT,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SE-003,210-AMDT,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SE-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SE-004,210-AMDT,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SE-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SE-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AE-001,210-AMDT-AE,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AE-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+AE-002,210-AMDT-AE,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+AE-003,210-AMDT-AE,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+AE-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+AE-004,210-AMDT-AE,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+AE-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+AE-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-001,210-BGGU,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+RE-002,210-BGGU,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-003,210-BGGU,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+RE-004,210-BGGU,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+RE-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-006,210-BLMW,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-006,210-BEXB,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-007,210-BLMW,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-008,210-BLMW,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-008,210-BEXB,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+RE-009,210-BLMW,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-009,210-BEXB,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+RE-010,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+K-001,210-BLDW,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+K-002,210-BLDW,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+K-003,210-BLDW,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+K-004,210-BLDW,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+K-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRV-001,210-BLPS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRV-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRV-002,210-BLPS,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRV-003,210-BLPS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRV-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SRV-004,210-BLPS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRV-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SRV-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+ARV-001,210-BLPS-CEL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-001,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-002,210-BLPS-CEL,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-003,210-BLPS-CEL,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-003,210-AZBS,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-004,210-BLPS-CEL,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+ARV-004,210-AZBS,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+ARV-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+ARV-006,210-BLWS ,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+ARV-006,210-BRPS ,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+ARV-006,470-AETL,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SVDI-001,210-BCXC,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SVDI-001,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SVDI-002,210-BCXC,Priority Overnight | Direct Sig,1,FEDEX,Josh Bird,791214637
+SVDI-003,210-BCXC,2Day | Direct Sig,1,FEDEX,Josh Bird,791214637
+SVDI-003,210-BBBY,2Day | Direct Sig,,FEDEX,Josh Bird,791214637
+SVDI-004,210-BCXC,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637
+SVDI-004,210-BBBY,2Day | Direct Sig | Ret,,FEDEX,Josh Bird,791214637
+SVDI-005,TBD,2Day | Direct Sig | Ret,1,FEDEX,Josh Bird,791214637

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Eagle File Manager"
-#define MyAppVersion "1.9"
+#define MyAppVersion "1.9.1"
 #define MyAppPublisher "Baker Studios"
 #define MyAppURL "www.dustybaker.us"
 #define MyAppExeName "Eagle.exe"
@@ -25,7 +25,7 @@ LicenseFile=C:\Users\dbaker\PycharmProjects\Order-Converter\License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=C:\Users\dbaker\PycharmProjects\Order-Converter
-OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.9_SETUP
+OutputBaseFilename=Eagle_File_Manager_WINDOWS_1.9.1_SETUP
 SetupIconFile=C:\Users\dbaker\PycharmProjects\Order-Converter\assets\images\Eagle.ico
 Compression=lzma
 SolidCompression=yes
